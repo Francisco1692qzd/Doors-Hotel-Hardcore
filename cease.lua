@@ -1,5 +1,7 @@
 -- XENO GITHUB MODEL LOADER (.rbxm / .rbxmx)
 local G = getgenv()
+local ReplicatedStorage = game.ReplicatedStorage
+local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
 G.LoadGithubModel = function(url)
     if not (writefile and getcustomasset and request) then return nil end
@@ -95,7 +97,16 @@ local function Cease()
                 if canSeeTarget(v.Character, 60) and v.Character.Humanoid.MoveDirection.Magnitude > 0 then
                     v.Character.Humanoid:TakeDamage(100)
                     game.ReplicatedStorage.GameStats["Player_".. v.Character.Name].Total.DeathCause.Value = "Cease"
-                    firesignal(game.ReplicatedStorage.Bricks.DeathHint.OnClientEvent, {"You died to who you call Shocker..","Dont look at it or it stuns you!"})
+                            local hints = {
+                                "You died to Dear god...",
+                                "Hide wont work, so try running",
+                                "Avoid eye contact!"
+                            }
+                            if firesignal then
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+		                    else
+			                    warn("firesignal not supported, ignore death hints.")
+		                    end
                 end
             end
 
