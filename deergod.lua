@@ -71,6 +71,7 @@ local function DeerGod()
     local killed = false
     local deergodId = "rbxassetid://12262883448"
     local entity = game:GetObjects(deergodId)[1]
+    entity.Parent = workspace
     local chaseTheme = G.LoadGithubAudio("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/DeerGodChaseTheme.mp3")
     local chaseMusic = Instance.new("Sound")
     chaseMusic.Parent = workspace
