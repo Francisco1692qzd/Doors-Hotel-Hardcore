@@ -1,5 +1,7 @@
 -- XENO GITHUB MODEL LOADER (.rbxm / .rbxmx)
 local G = getgenv()
+local ReplicatedStorage = game.ReplicatedStorage
+local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
 -- Garantindo que a função exista no ambiente Global
 G.LoadGithubModel = function(url)
@@ -114,6 +116,16 @@ local function DeerGod()
                 if canSeeTarget(v.Character, 50) and not v.Character:GetAttribute("Hiding") then
                     v.Character.Humanoid:TakeDamage(100)
                     game.ReplicatedStorage.GameStats["Player_".. v.Character.Name].Total.DeathCause.Value = "Deer God"
+                            local hints = {
+                                "You died to Dear god...",
+                                "Hide wont work, so try running",
+                                "Avoid eye contact!"
+                            }
+                            if firesignal then
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+		                    else
+			                    warn("firesignal not supported, ignore death hints.")
+		                    end
                 end
             end
         end
