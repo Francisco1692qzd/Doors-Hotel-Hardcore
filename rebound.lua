@@ -1,4 +1,5 @@
 local G = getgenv()
+local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
 G.LoadGithubAudio = function(url)
     if not (writefile and getcustomasset and request) then return nil end
@@ -173,6 +174,16 @@ local function Rebound()
                                 "He makes his presence known and keeps coming back...",
                                 "Hide when this happens!"
                             })
+                            local hints = {
+                                "You died to who you call Rebound...",
+                                "He makes his presence known and keeps coming back...",
+                                "Hide when this happens!"
+                            }
+                            if firesignal then
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+		                    else
+			                    warn("firesignal not supported, ignore death hints.")
+		                    end
                         end)
                         wait(0.5)
                         game.TweenService:Create(static, TweenInfo.new(1), {ImageTransparency = 1}):Play()
