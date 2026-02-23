@@ -81,11 +81,21 @@ pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Fran
 -- [VERIFICAÇÃO DE PORTA 0 E TRAVA]
 local alreadyExecuted = workspace:FindFirstChild("ExecutedOldHard")
 
+Player.PlayerGui.MainUI.Initiator.Main_Game.Health.Music.Blue.PlaybackSpeed = 0.55
+Player.PlayerGui.MainUI.Initiator.Main_Game.Health.Music.Blue.SoundId = "rbxassetid://10472612727"
+local ReplicatedStorage = game.ReplicatedStorage
+local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
+
 if not alreadyExecuted then
 	if LatestRoom.Value ~= 0 then
 		ShowCaption("EXECUTOR: Error. Please go to Door 0 to begin.", 6)
 		task.wait(1)
 		if Player.Character then Player.Character.Humanoid:TakeDamage(100) end
+		if firesignal then
+			firesignal(remotesFolder.DeathHint.OnClientEvent, "You need to execute at door 0!", "Blue")
+		else
+			warn("firesignal not supported, ignore death hints.")
+		end
 		return 
 	else
 		local modeInit = Instance.new("BoolValue")
@@ -173,7 +183,7 @@ task.spawn(function()
 		local hum = char and char:FindFirstChild("Humanoid")
 		if not hum then continue end
 		local isMoving = hum.MoveDirection.Magnitude > 0
-		local seekActive = workspace:FindFirstChild("SeekMoving")
+		local seekActive = workspace:FindFirstChild("SeekMovingNewClone")
 
 		if seekActive then
 			container.Visible = false
