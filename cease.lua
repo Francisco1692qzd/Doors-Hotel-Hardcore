@@ -43,6 +43,7 @@ local function Cease()
     end
 
     if not entity then return end
+    entity.Silence:Play()
 
     local entityPart = entity:FindFirstChildWhichIsA("BasePart")
     local tweenLights = TweenInfo.new(1)
