@@ -76,6 +76,8 @@ local function ShowSmoothCredits()
 	end)
 end
 
+pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))() end)
+
 -- [VERIFICAÇÃO DE PORTA 0 E TRAVA]
 local alreadyExecuted = workspace:FindFirstChild("ExecutedOldHard")
 
