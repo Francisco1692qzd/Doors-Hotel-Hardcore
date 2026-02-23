@@ -1,4 +1,5 @@
 local G = getgenv()
+local ReplicatedStorage = game.ReplicatedStorage
 local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
 G.LoadGithubAudio = function(url)
