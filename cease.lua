@@ -99,7 +99,7 @@ local function Cease()
             end
 
             if v.Character ~= nil and (entityPart.Position - v.Character.HumanoidRootPart.Position).magnitude <= 60 then
-                camShake:ShakeOnce(7, 15, 0.5, 1,1,6)
+                camShake:ShakeOnce(7, 25, 0.5, 0.1,1,6)
             end
         end
     end)
