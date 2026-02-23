@@ -98,9 +98,8 @@ local function Cease()
                     v.Character.Humanoid:TakeDamage(100)
                     game.ReplicatedStorage.GameStats["Player_".. v.Character.Name].Total.DeathCause.Value = "Cease"
                             local hints = {
-                                "You died to Dear god...",
-                                "Hide wont work, so try running",
-                                "Avoid eye contact!"
+                                "You died to Cease...",
+                                "Maybe trying to not move when he's nearby?"
                             }
                             if firesignal then
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
@@ -111,7 +110,7 @@ local function Cease()
             end
 
             if v.Character ~= nil and (entityPart.Position - v.Character.HumanoidRootPart.Position).magnitude <= 60 then
-                camShake:ShakeOnce(7, 25, 0.5, 0.1,1,6)
+                camShake:ShakeOnce(7, 25, 0.5, 0.4,1,6)
             end
         end
     end)
