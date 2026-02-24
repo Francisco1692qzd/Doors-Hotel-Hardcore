@@ -17,6 +17,7 @@ G.LoadGithubModel = function(url)
     return nil
 end
 
+local function ceasetheroom()
     local ambruhspeed = 40
     local DEF_SPEED = 9999
     local storer = ambruhspeed
@@ -144,3 +145,5 @@ end
     entityPart.Anchored = false
     entityPart.CanCollide = false
     game.Debris:AddItem(entity, 5)
+end
+pcall(ceasetheroom)
