@@ -40,7 +40,6 @@ G.LoadGithubAudio = function(url)
     return nil
 end
 
-local function Ripper()
     local breakMove = false
     local killed = false
     local repStorage = game.ReplicatedStorage
@@ -228,6 +227,3 @@ local function Ripper()
     entityPart.Anchored = false
     entityPart.CanCollide = false
     game.Debris:AddItem(entity, 5)
-end
-
-spawn(Ripper)
