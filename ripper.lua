@@ -40,6 +40,7 @@ G.LoadGithubAudio = function(url)
     return nil
 end
 
+local function SPAWNHORROR()
     local breakMove = false
     local killed = false
     local repStorage = game.ReplicatedStorage
@@ -227,3 +228,5 @@ end
     entityPart.Anchored = false
     entityPart.CanCollide = false
     game.Debris:AddItem(entity, 5)
+end
+pcall(SPAWNHORROR)
