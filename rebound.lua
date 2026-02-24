@@ -180,11 +180,7 @@ local function Rebound()
                                 "He makes his presence known and keeps coming back...",
                                 "Hide when this happens!"
                             }
-                            if firesignal then
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
-		                    else
-			                    warn("firesignal not supported, ignore death hints.")
-		                    end
                         end)
                         wait(0.5)
                         game.TweenService:Create(static, TweenInfo.new(1), {ImageTransparency = 1}):Play()
