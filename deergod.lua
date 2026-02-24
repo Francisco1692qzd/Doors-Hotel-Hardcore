@@ -155,4 +155,4 @@ local function DeerGod()
     wait(1.5)
     chaseMusic:Destroy()
 end
-spawn(DeerGod)
+pcall(DeerGod)
