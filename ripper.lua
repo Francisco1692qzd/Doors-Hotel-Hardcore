@@ -170,11 +170,7 @@ local function SPAWNHORROR()
                                 "He screams so making you know his presence is here...",
                                 "Hide when this happens!"
                             }
-                            if firesignal then
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
-		                    else
-			                    warn("firesignal not supported, ignore death hints.")
-		                    end
                     end)()
                 end
             end
