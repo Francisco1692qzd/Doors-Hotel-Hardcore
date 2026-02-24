@@ -101,11 +101,7 @@ local function ceasetheroom()
                                 "You died to Cease...",
                                 "Maybe trying to not move when he's nearby?"
                             }
-                            if firesignal then
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
-		                    else
-			                    warn("firesignal not supported, ignore death hints.")
-		                    end
                 end
             end
 
