@@ -252,4 +252,4 @@ local function SpawnReb()
     end
 end
 
-spawn(SpawnReb)
+pcall(SpawnReb)
