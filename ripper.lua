@@ -2,6 +2,22 @@ local G = getgenv()
 local ReplicatedStorage = game.ReplicatedStorage
 local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
+G.LoadGithubModel = function(url)
+    if not (writefile and getcustomasset and request) then
+        return nil
+    end
+    local response = request({Url = url, Method = "GET"})
+    if response.StatusCode ~= 200 then return nil end
+    local fileName = "temp_model_" .. tick() .. ".rbxm"
+    writefile(fileName, response.Body)
+    local assetId = getcustomasset(fileName)
+    local success, result = pcall(function()
+        return game:GetObjects(assetId)[1]
+    end)
+    if success and result then return result end
+    return nil
+end
+
 G.LoadGithubAudio = function(url)
     if not (writefile and getcustomasset and request) then return nil end
 
@@ -59,9 +75,14 @@ local function SPAWNHORROR()
     end)
     camShake:Start()
     camShake:Shake(cameraShaker.Presets.Earthquake)
-    local ripperId = "rbxassetid://12797541507"
-    local entity = game:GetObjects(ripperId)[1]
-    entity.Parent = workspace
+	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
+	local entity = nil
+	if G.LoadGithubModel then
+        entity = G.LoadGithubModel(rawUrl)
+        if entity then
+            entity.Parent = workspace
+        end
+    end
 
     if not entity then return end -- Se falhar, para aqui sem quebrar o resto
     
