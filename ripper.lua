@@ -1,10 +1,8 @@
-local G = getgenv()
-
 local ReplicatedStorage = game.ReplicatedStorage
 
 local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
-
+local G = getgenv()
 
 G.LoadGithubModel = function(url)
 
@@ -36,7 +34,7 @@ G.LoadGithubModel = function(url)
 
 end
 
-
+local G = getgenv()
 
 G.LoadGithubAudio = function(url)
 
@@ -98,7 +96,7 @@ G.LoadGithubAudio = function(url)
 
     if success then
 
-        print("✅ Áudio Rebound carregado com sucesso!")
+        --print("✅ Áudio Rebound carregado com sucesso!")
 
         return assetId
 
@@ -132,7 +130,7 @@ local function SPAWNHORROR()
 
     local entity = nil
 
-    local ambruhspeed = 120
+    local ambruhspeed = 100
 
     local DEF_SPEED = 99999 -- MANTIDO original
 
@@ -143,36 +141,11 @@ local function SPAWNHORROR()
     local cameraShaker = require(repStorage.CameraShaker)
 
     local camera = workspace.CurrentCamera
-
-    local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
-
-        camera.CFrame = camera.CFrame * cf
-
-    end)
-
-    camShake:Start()
-
-    camShake:Shake(cameraShaker.Presets.Earthquake)
-
-local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
-
-if G.LoadGithubModel then
-
-        entity = G.LoadGithubModel(rawUrl)
-
-        if entity then
-
-            entity.Parent = workspace
-
-        end
-
-    end
-
-
+    local ripperId = "rbxassetid://12797541507"
+    local entity = game:GetObjects(ripperId)[1]
+    entity.Parent = workspace
 
     if not entity then return end -- Se falhar, para aqui sem quebrar o resto
-
-    
 
     local tweenLights = TweenInfo.new(1)
 
@@ -494,4 +467,19 @@ if G.LoadGithubModel then
 
 end
 
-pcall(SPAWNHORROR)
+local function fuck()
+    local camera = workspace.CurrentCamera
+
+    local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
+
+        camera.CFrame = camera.CFrame * cf
+
+    end)
+
+    camShake:Start()
+
+    camShake:Shake(cameraShaker.Presets.Earthquake)
+
+    pcall(SPAWNHORROR)
+end
+pcall(fuck)
