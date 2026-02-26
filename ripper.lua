@@ -116,6 +116,8 @@ end
 
 local function SPAWNHORROR()
 
+    local entity = nil
+    
     local breakMove = false
 
     local killed = false
@@ -153,8 +155,6 @@ local function SPAWNHORROR()
     camShake:Shake(cameraShaker.Presets.Earthquake)
 
 local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
-
-local entity = nil
 
 if G.LoadGithubModel then
 
