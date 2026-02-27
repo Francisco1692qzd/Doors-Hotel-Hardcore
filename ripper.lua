@@ -194,7 +194,7 @@ local function SPAWNHORROR()
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
 							elseif ReplicatedStorage:FindFirstChild("Bricks") then
 								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
-			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
 							end
                     end)()
                 end
