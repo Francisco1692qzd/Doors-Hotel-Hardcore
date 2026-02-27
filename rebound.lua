@@ -175,12 +175,13 @@ local function Rebound()
                                 "He makes his presence known and keeps coming back...",
                                 "Hide when this happens!"
                             })--]]
-                            local hints = {
-                                "You died to who you call Rebound...",
-                                "He makes his presence known and keeps coming back...",
-                                "Hide when this happens!"
-                            }
+							if ReplicatedStorage:FindFirstChild("RemotesFolder") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							elseif ReplicatedStorage:FindFirstChild("Bricks") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
+							end
                         end)
                         wait(0.5)
                         game.TweenService:Create(static, TweenInfo.new(1), {ImageTransparency = 1}):Play()
