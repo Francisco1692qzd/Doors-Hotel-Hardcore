@@ -1,7 +1,6 @@
 -- XENO GITHUB MODEL LOADER (.rbxm / .rbxmx)
 local G = getgenv()
 local ReplicatedStorage = game.ReplicatedStorage
-local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
 -- Garantindo que a função exista no ambiente Global
 G.LoadGithubModel = function(url)
@@ -121,7 +120,13 @@ local function DeerGod()
                                 "Hide wont work, so try running",
                                 "Avoid eye contact!"
                             }
+							if ReplicatedStorage:FindFirstChild("RemotesFolder") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							elseif ReplicatedStorage:FindFirstChild("Bricks") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							end
                 end
             end
         end
