@@ -175,6 +175,11 @@ local function Rebound()
                                 "He makes his presence known and keeps coming back...",
                                 "Hide when this happens!"
                             })--]]
+							local hints = {
+								"Avoid looking at it completely!",
+								"He may trick you by coming through rooms again...",
+								"Find a hide spot!"
+							}
 							if ReplicatedStorage:FindFirstChild("RemotesFolder") then
 								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
