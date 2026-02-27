@@ -1,6 +1,5 @@
 local G = getgenv()
 local ReplicatedStorage = game.ReplicatedStorage
-local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
 
 G.LoadGithubModel = function(url)
     if not (writefile and getcustomasset and request) then
@@ -190,7 +189,13 @@ local function SPAWNHORROR()
                             "He screams so making you know his presence is here...",
                             "Hide when this happens!"
                         }
-                        firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+                        	if ReplicatedStorage:FindFirstChild("RemotesFolder") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							elseif ReplicatedStorage:FindFirstChild("Bricks") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							end
                     end)()
                 end
             end
