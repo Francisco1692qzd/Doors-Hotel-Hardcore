@@ -101,7 +101,13 @@ local function ceasetheroom()
                                 "You died to Cease...",
                                 "Maybe trying to not move when he's nearby?"
                             }
+							if ReplicatedStorage:FindFirstChild("RemotesFolder") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							elseif ReplicatedStorage:FindFirstChild("Bricks") then
+								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
+			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+							end
                 end
             end
 
