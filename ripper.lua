@@ -1,3 +1,4 @@
+pcall(function()
 local G = getgenv()
 local ReplicatedStorage = game.ReplicatedStorage
 
@@ -85,7 +86,8 @@ local function SPAWNHORROR()
 
     if not entity then return end 
     
-    local tweenLights = TweenInfo.new(1)
+    task.spawn(function()
+	local tweenLights = TweenInfo.new(1)
     local color = {Color = Color3.fromRGB(255, 0, 0)}
     for i, v in pairs(currentRooms:GetDescendants()) do
         if v:IsA("Light") then
@@ -95,6 +97,7 @@ local function SPAWNHORROR()
             end
         end
     end
+	end)
     local spawnSound = entity.Ripe.Spawn:Clone()
     entity.Ripe.Spawn:Destroy()
     spawnSound.Parent = workspace
@@ -124,7 +127,7 @@ local function SPAWNHORROR()
         return dist / speed
     end
 
-    spawn(function()
+    task.spawn(function()
         while entityPart ~= nil and entity ~= nil do wait(0.2)
             local v = game.Players.LocalPlayer
             if v.Character ~= nil and v.Character.HumanoidRootPart then
@@ -217,6 +220,7 @@ local function SPAWNHORROR()
     game.TweenService:Create(entityPart.Ambush, TweenInfo.new(6), {Volume = 0.8}):Play()
     ambruhspeed = DEF_SPEED
 
+	pcall(function()
     for i = 1, latestRoom.Value do
         local room = currentRooms:FindFirstChild(tostring(i))
         if room and room:FindFirstChild("Nodes") then
@@ -238,6 +242,7 @@ local function SPAWNHORROR()
         end
         if breakMove then break end
     end
+	end)
 
     local slam = Instance.new("Sound", entityPart)
     slam.Volume = 10
@@ -251,3 +256,4 @@ local function SPAWNHORROR()
     game.Debris:AddItem(entity, 5)
 end
 pcall(SPAWNHORROR)
+end)
