@@ -73,8 +73,10 @@ local function SPAWNHORROR()
     local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
         camera.CFrame = camera.CFrame * cf
     end)
+	pcall(function()
     camShake:Start()
     camShake:ShakeOnce(5,1,1,3,1,1)
+	end)
 	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
 	
 	if G.LoadGithubModel then
@@ -127,6 +129,7 @@ local function SPAWNHORROR()
         return dist / speed
     end
 
+	pcall(function()
     task.spawn(function()
         while entityPart ~= nil and entity ~= nil do wait(0.2)
             local v = game.Players.LocalPlayer
@@ -209,6 +212,7 @@ local function SPAWNHORROR()
             if breakMove then break end
         end
     end)
+	end)
 
     -- MOVIMENTO POR NODES ORIGINAL
     entityPart.Ambush.SoundId = "rbxassetid://6963538865"
@@ -234,7 +238,7 @@ local function SPAWNHORROR()
                     bruh:Play()
                     bruh.Completed:Wait()
                     ambruhspeed = storer
-                    if room.Name == tostring(latestRoom.Value) then
+                    if room.Name == nodes.Parent.Name then
                         pcall(function() room.Door.ClientOpen:FireServer() end)
                     end
                 end
@@ -255,5 +259,5 @@ local function SPAWNHORROR()
     entityPart.CanCollide = false
     game.Debris:AddItem(entity, 5)
 end
-pcall(SPAWNHORROR)
+task.spawn(function() pcall(SPAWNHORROR) end)
 end)
