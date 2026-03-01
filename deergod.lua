@@ -61,7 +61,7 @@ end
 
 local function DeerGod()
     local ambruhspeed = 15
-    local DEF_SPEED = 9999
+    local DEF_SPEED = 99999
     local storer = ambruhspeed
     local ambruhheight = Vector3.new(0, 3.4, 0)
     local repStorage = game.ReplicatedStorage
