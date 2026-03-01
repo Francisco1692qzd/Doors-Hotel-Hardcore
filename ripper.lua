@@ -108,6 +108,9 @@ local function SPAWNHORROR()
     spawnSound:Play()
     
     local entityPart = entity:FindFirstChildWhichIsA("BasePart")
+	local slam = Instance.new("Sound", entityPart)
+    slam.Volume = 10
+    slam.SoundId = "rbxassetid://1837829565"
 
     local function canSeeTarget(target, size)
         if killed == true then return end
@@ -247,10 +250,7 @@ local function SPAWNHORROR()
         if breakMove then break end
     end
 	end)
-
-    local slam = Instance.new("Sound", entityPart)
-    slam.Volume = 10
-    slam.SoundId = "rbxassetid://1837829565"
+	
     camShake:Shake(cameraShaker.Presets.Explosion)
     pcall(function() workspace.CurrentRooms[latestRoom.Value].Door.ClientOpen:FireServer() end)
     slam:Play()
