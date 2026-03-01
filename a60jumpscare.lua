@@ -106,7 +106,8 @@ task.spawn(function()
     
     -- Kill Player
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-        game.Players.LocalPlayer.Character.Humanoid.Health = 0
+        local fuckinngggggggg = game.Players.LocalPlayer.Character.Humanoid.Health
+        fuckinngggggggg = 0
     end
     
     task.wait(4)
