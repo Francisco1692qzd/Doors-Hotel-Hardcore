@@ -75,7 +75,7 @@ local function SPAWNHORROR()
     end)
 	pcall(function()
     camShake:Start()
-    camShake:ShakeOnce(5,1,1,3,1,1)
+    camShake:Shake(cameraShaker.Presets.Earthquake)
 	end)
 	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
 	
@@ -251,7 +251,7 @@ local function SPAWNHORROR()
     local slam = Instance.new("Sound", entityPart)
     slam.Volume = 10
     slam.SoundId = "rbxassetid://1837829565"
-    camShake:ShakeOnce(20, 15, 0, 4, 5, 10)
+    camShake:Shake(cameraShaker.Presets.Explosion)
     pcall(function() workspace.CurrentRooms[latestRoom.Value].Door.ClientOpen:FireServer() end)
     slam:Play()
     wait(1)
