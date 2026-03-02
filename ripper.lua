@@ -77,7 +77,7 @@ local function SPAWNHORROR()
     camShake:Start()
     camShake:Shake(cameraShaker.Presets.Earthquake)
 	end)
-	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
+	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper2.rbxm"
 	
 	if G.LoadGithubModel then
         entity = G.LoadGithubModel(rawURL)
