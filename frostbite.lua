@@ -93,6 +93,7 @@ task.spawn(function()
     part.Attachment.face.Enabled = true
 
     -- DAMAGE LOGIC (Fixed Lighter Check)
+    task.delay(1.3, function()
     task.spawn(function()
         while active and entity and entity.Parent do
             local char = player.Character
@@ -126,6 +127,7 @@ task.spawn(function()
             end
             task.wait(1)
         end
+    end)
     end)
 
     -- Wait for player to move to next room
