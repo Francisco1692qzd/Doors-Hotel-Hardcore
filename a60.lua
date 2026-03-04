@@ -32,7 +32,14 @@ task.spawn(function()
 	end
     local function canSeeTarget(target, size)
         if killed == true then return end
-		if game.ReplicatedStorage.ModulesClient.EntityModules.Shade.Music.IsPlaying == true or game.ReplicatedStorage.FloorReplicated.SeekMusic.IsPlaying == true or latestRoom.Value == 50 or latestRoom.Value == 100 then return end
+		local blacklistedRooms = {50, 100}
+		local shadeMusic = game.ReplicatedStorage:FindFirstChild("Shade", true) -- Recursive search
+		local seekMusic = game.ReplicatedStorage:FindFirstChild("SeekMusic", true)
+
+		if (shadeMusic and shadeMusic.IsPlaying) or (seekMusic and seekMusic.IsPlaying) or table.find(blacklistedRooms, latestRoom.Value) then 
+    		return 
+		end
+		
         local origin = pr.Position
         local direction = (target.HumanoidRootPart.Position - pr.Position).unit * size
         local ray = Ray.new(origin, direction)
