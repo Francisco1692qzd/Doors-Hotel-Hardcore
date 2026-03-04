@@ -32,6 +32,7 @@ task.spawn(function()
 	end
     local function canSeeTarget(target, size)
         if killed == true then return end
+		if game.ReplicatedStorage.ModulesClient.EntityModules.Shade.Music.IsPlaying == true or game.ReplicatedStorage.FloorReplicated.SeekMusic.IsPlaying == true or latestRoom.Value == 50 or latestRoom.Value == 100 then return end
         local origin = pr.Position
         local direction = (target.HumanoidRootPart.Position - pr.Position).unit * size
         local ray = Ray.new(origin, direction)
@@ -76,7 +77,7 @@ task.spawn(function()
 	ambruhspeed = DEF_SPEED
 
 	local function Forward()
-		local limit = game.ReplicatedStorage.GameData.LatestRoom.Value
+		local limit = latestRoom.Value
 		for i = 1, limit do
 			local room = gruh:FindFirstChild(tostring(i))
 			if room and room:FindFirstChild("Nodes") then
@@ -94,7 +95,7 @@ task.spawn(function()
 	end
 
 	local function Backward()
-		local limit = game.ReplicatedStorage.GameData.LatestRoom.Value
+		local limit = latestRoom.Value
 		for i = limit, 1, -1 do
 			local room = gruh:FindFirstChild(tostring(i))
 			if room and room:FindFirstChild("Nodes") then
@@ -117,7 +118,7 @@ task.spawn(function()
 		pcall(Forward)
 		task.wait(1)
 		pcall(Backward)
-		task.wait(0.5)
+		task.wait(1)
 	end
 	entity:Destroy()
     local light = Instance.new("ColorCorrectionEffect")
