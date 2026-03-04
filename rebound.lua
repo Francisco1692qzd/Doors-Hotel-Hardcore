@@ -40,41 +40,19 @@ G.LoadGithubAudio = function(url)
     return nil
 end
 
-G.LoadGithubAudio = function(url)
-    if not (writefile and getcustomasset and request) then return nil end
-
-    -- Bypass de Cache: Adiciona um número aleatório ao final para forçar o download limpo
-    local cleanUrl = url .. "?t=" .. math.random(1, 100000)
-
-    local response = request({
-        Url = cleanUrl,
-        Method = "GET",
-        Headers = {
-            ["Accept"] = "audio/mpeg, audio/ogg, application/octet-stream"
-        }
-    })
-
-    if response.StatusCode ~= 200 then
-        warn("Xeno: Falha no download. Status: " .. response.StatusCode)
+G.LoadGithubModel = function(url)
+    if not (writefile and getcustomasset and request) then
         return nil
     end
-
-    -- Nome único para evitar conflitos de escrita
-    local fileName = "rebound_fix_" .. tick() .. ".mp3"
-    
-    -- Salva e força a leitura
+    local response = request({Url = url, Method = "GET"})
+    if response.StatusCode ~= 200 then return nil end
+    local fileName = "temp_model_" .. tick() .. ".rbxm"
     writefile(fileName, response.Body)
-    
-    local success, assetId = pcall(function()
-        return getcustomasset(fileName)
+    local assetId = getcustomasset(fileName)
+    local success, result = pcall(function()
+        return game:GetObjects(assetId)[1]
     end)
-
-    if success then
-        print("✅ Áudio Rebound carregado com sucesso!")
-        return assetId
-    end
-    
-    warn("Erro no getcustomasset: " .. tostring(assetId))
+    if success and result then return result end
     return nil
 end
 
