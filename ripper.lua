@@ -92,7 +92,15 @@ local function SPAWNHORROR()
     
 	local tweenLights = TweenInfo.new(1)
     local color = {Color = Color3.fromRGB(255, 0, 0)}
-    for i, v in pairs(currentRooms:GetDescendants()) do
+    for i, v in pairs(currentRooms[latestRoom.Value]:GetDescendants()) do
+        if v:IsA("Light") then
+            game.TweenService:Create(v, tweenLights, color):Play()
+            if v.Parent.Name == "LightFixture" then
+                game.TweenService:Create(v.Parent, tweenLights, color):Play()
+            end
+        end
+    end
+    for i, v in pairs(currentRooms[latestRoom.Value - 1]:GetDescendants()) do
         if v:IsA("Light") then
             game.TweenService:Create(v, tweenLights, color):Play()
             if v.Parent.Name == "LightFixture" then
