@@ -32,13 +32,20 @@ task.spawn(function()
 	end
     local function canSeeTarget(target, size)
         if killed == true then return end
-		local blacklistedRooms = {50, 100}
-		local shadeMusic = game.ReplicatedStorage:FindFirstChild("Shade", true) -- Recursive search
-		local seekMusic = game.ReplicatedStorage:FindFirstChild("SeekMusic", true)
+local function isBossActive()
+    local room = latestRoom.Value
+    if room == 50 or room == 100 then return true end
+    
+    -- Check for any playing music in ReplicatedStorage that might indicate a cutscene
+    for _, sound in pairs(game.ReplicatedStorage:GetDescendants()) do
+        if sound:IsA("Sound") and sound.IsPlaying and (sound.Name:find("Music") or sound.Name == "Shade") then
+            return true
+        end
+    end
+    return false
+end
 
-		if (shadeMusic and shadeMusic.IsPlaying) or (seekMusic and seekMusic.IsPlaying) or table.find(blacklistedRooms, latestRoom.Value) then 
-    		return 
-		end
+if isBossActive() then return end
 		
         local origin = pr.Position
         local direction = (target.HumanoidRootPart.Position - pr.Position).unit * size
