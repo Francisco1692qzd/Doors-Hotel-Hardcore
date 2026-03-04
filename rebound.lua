@@ -104,6 +104,7 @@ local function Rebound()
         if killed == true then
             return
         end
+		if game.ReplicatedStorage.ModulesClient.EntityModules.Shade.Music.IsPlaying == true or game.ReplicatedStorage.FloorReplicated.SeekMusic.IsPlaying == true or latestRoom.Value == 50 or latestRoom.Value == 100 then return end
 
         local origin = entityPart.Position
         local direction = (target.HumanoidRootPart.Position - origin).unit * size
