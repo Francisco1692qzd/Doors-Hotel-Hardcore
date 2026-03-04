@@ -68,14 +68,16 @@ local function SPAWNHORROR()
     local DEF_SPEED = 99999 -- MANTIDO original
     local storer = ambruhspeed
     local ambruhheight = Vector3.new(0,8,0)
-    local cameraShaker = require(repStorage.CameraShaker)
+    --local cameraShaker = require(repStorage.CameraShaker)
+	local success, result = pcall(function() return require(repStorage.CameraShaker) end)
+	if not success then warn("Module failed to load, but script is still running!") end
     local camera = workspace.CurrentCamera
-    local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
+    local camShake = result.new(Enum.RenderPriority.Camera.Value, function(cf)
         camera.CFrame = camera.CFrame * cf
     end)
 	pcall(function()
     camShake:Start()
-    camShake:Shake(cameraShaker.Presets.Earthquake)
+    camShake:Shake(result.Presets.Earthquake)
 	end)
 	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper2.rbxm"
 	
@@ -88,7 +90,6 @@ local function SPAWNHORROR()
 
     if not entity then return end 
     
-    task.spawn(function()
 	local tweenLights = TweenInfo.new(1)
     local color = {Color = Color3.fromRGB(255, 0, 0)}
     for i, v in pairs(currentRooms:GetDescendants()) do
@@ -99,7 +100,6 @@ local function SPAWNHORROR()
             end
         end
     end
-	end)
     local spawnSound = entity.Ripe.Spawn:Clone()
     entity.Ripe.Spawn:Destroy()
     spawnSound.Parent = workspace
@@ -251,7 +251,7 @@ local function SPAWNHORROR()
     end
 	end)
 	
-    camShake:Shake(cameraShaker.Presets.Explosion)
+    camShake:Shake(result.Presets.Explosion)
     pcall(function() workspace.CurrentRooms[latestRoom.Value].Door.ClientOpen:FireServer() end)
     slam:Play()
     wait(1)
