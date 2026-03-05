@@ -1,6 +1,6 @@
 local G = getgenv()
 local ReplicatedStorage = game.ReplicatedStorage
-local remotesFolder = ReplicatedStorage:WaitForChild("RemotesFolder")
+local remotesFolder = nil
 
 G.LoadGithubAudio = function(url)
     if not (writefile and getcustomasset and request) then return nil end
@@ -219,10 +219,10 @@ if isBossActive() then return end
 								"Find a hide spot!"
 							}
 							if ReplicatedStorage:FindFirstChild("RemotesFolder") then
-								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
+								remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
 							elseif ReplicatedStorage:FindFirstChild("Bricks") then
-								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
+								remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
 			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
 							end
                         end)
