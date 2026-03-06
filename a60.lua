@@ -3,40 +3,43 @@ local hints = {
 }
 
 local rep = game.ReplicatedStorage
-local remotesFolder = nil
 
-task.spawn(function()
-	local camera = workspace.CurrentCamera
-	local cameraShaker = require(game.ReplicatedStorage.CameraShaker)
-	local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
-		camera.CFrame = camera.CFrame * cf
-	end)
-	camShake:Start()
-	local gameData = game.ReplicatedStorage:WaitForChild("GameData")
-	local latestRoom = gameData:WaitForChild("LatestRoom")
-	local ambruhheight = Vector3.new(0,3,0)
-	local ambruhspeed = 160
-	local DEF_SPEED = 9999
-	local randomizedtimes = math.random(4, 9)
-	local killed = false
+-- [[ FORCE LOAD: Retries 20 times to bypass Roblox asset loading lag ]]
+local function loadModel(id)
+    local obj = nil
+    local attempts = 0
+    local maxAttempts = 20
 
-	local player = game.Players.LocalPlayer
-	local entity = game:GetObjects("rbxassetid://15972282065")[1]
-	if entity == nil then return end
-	entity.Parent = workspace
-	local pr = entity:FindFirstChildWhichIsA("BasePart")
-	print("true or false?")
-	print("true or false?")
-	local function GetTime(dist, speed)
-		return dist / speed
-	end
-    local function canSeeTarget(target, size)
-        if killed == true then return end
-local function isBossActive()
-    local room = latestRoom.Value
-    if room == 50 or room == 100 then return true end
+    while obj == nil and attempts < maxAttempts do
+        attempts = attempts + 1
+        local success, result = pcall(function()
+            return game:GetObjects("rbxassetid://" .. id)
+        end)
+
+        if success and result and result[1] then
+            obj = result[1]
+            --print("✅ Depth Model Loaded successfully on attempt: " .. attempts)
+        else
+            --warn("⚠️ Attempt " .. attempts .. " failed to load model " .. id .. ". Retrying...")
+            task.wait(0.5) -- Small breather for the engine
+        end
+    end
+
+    if not obj then
+        warn("❌ CRITICAL: Failed to load model after 20 attempts.")
+    end
     
-    -- Check for any playing music in ReplicatedStorage that might indicate a cutscene
+    return obj
+end
+
+local function isBossActive()
+    local gameData = game.ReplicatedStorage:FindFirstChild("GameData")
+    if not gameData then return false end
+    local latestRoom = gameData:FindFirstChild("LatestRoom")
+    
+    local room = latestRoom.Value
+    if room == 48 or room == 99 then return true end
+    
     for _, sound in pairs(game.ReplicatedStorage:GetDescendants()) do
         if sound:IsA("Sound") and sound.IsPlaying and (sound.Name:find("Music") or sound.Name == "Shade") then
             return true
@@ -45,107 +48,147 @@ local function isBossActive()
     return false
 end
 
-if isBossActive() then return end
-		
+task.spawn(function()
+    local camera = workspace.CurrentCamera
+    local shakerModule = game.ReplicatedStorage:FindFirstChild("CameraShaker")
+    if not shakerModule then return end
+    
+    local cameraShaker = require(shakerModule)
+    local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
+        camera.CFrame = camera.CFrame * cf
+    end)
+    camShake:Start()
+
+    local gameData = game.ReplicatedStorage:WaitForChild("GameData")
+    local latestRoom = gameData:WaitForChild("LatestRoom")
+    local ambruhheight = Vector3.new(0, 3, 0)
+    local ambruhspeed = 160
+    local DEF_SPEED = 9999
+    local randomizedtimes = math.random(4, 9)
+    local killed = false
+
+    local entity = loadModel(15972282065) -- The 20-attempt loop starts here
+    if not entity then return end
+    
+    entity.Parent = workspace
+    local pr = entity:FindFirstChildWhichIsA("BasePart") or entity:FindFirstChildWhichIsA("MeshPart")
+    if not pr then return end
+
+    local function GetTime(dist, speed)
+        return dist / speed
+    end
+
+    local function canSeeTarget(target, size)
+        if killed then return end
         local origin = pr.Position
-        local direction = (target.HumanoidRootPart.Position - pr.Position).unit * size
+        local targetPos = target.HumanoidRootPart.Position
+        local direction = (targetPos - pr.Position).unit * size
         local ray = Ray.new(origin, direction)
         local hit = workspace:FindPartOnRay(ray, pr)
-        if hit then
-            if hit:IsDescendantOf(target) then
-                killed = true
-                return true
+        
+        if hit and hit:IsDescendantOf(target) then
+            return true
+        end
+        return false
+    end
+
+    task.wait(1)
+
+    -- Kill/Shake Loop
+    task.spawn(function()
+        while entity and entity.Parent do 
+            task.wait(0.1)
+            local v = game.Players.LocalPlayer
+            if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                local root = v.Character.HumanoidRootPart
+                
+                if canSeeTarget(v.Character, 70) and not v.Character:GetAttribute("Hiding") then
+                    killed = true
+                    pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/refs/heads/main/wow!.lua"))() end)
+                    
+                    task.delay(1.3, function()
+                        v.Character.Humanoid.Health = 0
+                        local stats = rep:FindFirstChild("GameStats")
+                        if stats and stats:FindFirstChild("Player_".. v.Name) then
+                            stats["Player_".. v.Name].Total.DeathCause.Value = "A-60"
+                        end
+                        
+                        local remotes = rep:FindFirstChild("RemotesFolder") or rep:FindFirstChild("Bricks")
+                        if remotes and remotes:FindFirstChild("DeathHint") then
+                            if remotes.Name == "RemotesFolder" then
+                                firesignal(remotes.DeathHint.OnClientEvent, hints, "Blue")
+                            else
+                                firesignal(remotes.DeathHint.OnClientEvent, hints)
+                            end
+                        end
+                    end)
+                end
+
+                if (pr.Position - root.Position).magnitude <= 70 then
+                    camShake:ShakeOnce(43, 20, 0.1, 2.3, 1, 6)
+                end
             end
-        else
-            return false
+        end
+    end)
+
+    local gruh = workspace.CurrentRooms
+    ambruhspeed = DEF_SPEED
+
+    local function Forward()
+        local limit = latestRoom.Value
+        for i = 1, limit do
+            local room = gruh:FindFirstChild(tostring(i))
+            if room and room:FindFirstChild("Nodes") then
+                local nodes = room.Nodes:GetChildren()
+                table.sort(nodes, function(a,b) return tonumber(a.Name) < tonumber(b.Name) end)
+                for _, node in ipairs(nodes) do
+                    local distance = (pr.Position - node.Position).magnitude
+                    local jerk = game.TweenService:Create(pr, TweenInfo.new(GetTime(distance, ambruhspeed), Enum.EasingStyle.Linear), {CFrame = node.CFrame + ambruhheight})
+                    jerk:Play()
+                    jerk.Completed:Wait()
+                    if ambruhspeed ~= 160 then ambruhspeed = 160 end
+                end
+            end
         end
     end
-	wait(1)
-	task.spawn(function()
-		while entity ~= nil and entity.Parent ~= nil do wait(0.1)
-			local v = game.Players.LocalPlayer
-			local root = v.Character:FindFirstChild("HumanoidRootPart")
-			if v.Character ~= nil and root ~= nil then
-				if canSeeTarget(v.Character, 70) and not v.Character:GetAttribute("Hiding") then
-					pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/refs/heads/main/wow!.lua"))() end)
-					task.delay(0.01, function()
-						v.Character.Humanoid.Health = 0
-						game.ReplicatedStorage.GameStats["Player_".. root.Parent.Name].Total.DeathCause.Value = "A-60"
-						    if ReplicatedStorage:FindFirstChild("RemotesFolder") then
-								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
-			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
-							elseif ReplicatedStorage:FindFirstChild("Bricks") then
-								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
-			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
-							end
-					end)
-				end
-			end
-			if v.Character ~= nil and root ~= nil and (pr.Position - root.Position).magnitude <= 70 then
-				camShake:ShakeOnce(43, 20, 0.1, 2.3, 1, 6)
-			end
-		end
-	end)
 
-	local gruh = workspace.CurrentRooms
-	ambruhspeed = DEF_SPEED
+    local function Backward()
+        local limit = latestRoom.Value
+        for i = limit, 1, -1 do
+            local room = gruh:FindFirstChild(tostring(i))
+            if room and room:FindFirstChild("Nodes") then
+                local nodes = room.Nodes:GetChildren()
+                table.sort(nodes, function(a,b) return tonumber(a.Name) < tonumber(b.Name) end)
+                for n = #nodes, 1, -1 do
+                    local node = nodes[n]
+                    local distance = (pr.Position - node.Position).magnitude
+                    local jerk = game.TweenService:Create(pr, TweenInfo.new(GetTime(distance, ambruhspeed), Enum.EasingStyle.Linear), {CFrame = node.CFrame + ambruhheight})
+                    jerk:Play()
+                    jerk.Completed:Wait()
+                    if ambruhspeed ~= 160 then ambruhspeed = 160 end
+                end
+            end
+        end
+    end
 
-	local function Forward()
-		local limit = latestRoom.Value
-		for i = 1, limit do
-			local room = gruh:FindFirstChild(tostring(i))
-			if room and room:FindFirstChild("Nodes") then
-				local nodes = room.Nodes:GetChildren()
-				table.sort(nodes, function(a,b) return tonumber(a.Name) < tonumber(b.Name) end)
-				for _, node in ipairs(nodes) do
-					local distance = (pr.Position - node.Position).magnitude
-					local jerk = game.TweenService:Create(pr, TweenInfo.new(GetTime(distance, ambruhspeed), Enum.EasingStyle.Linear), {CFrame = node.CFrame + ambruhheight})
-					jerk:Play()
-					jerk.Completed:Wait()
-					if ambruhspeed ~= 160 then ambruhspeed = 160 end
-				end
-			end
-		end
-	end
+    -- --- 🏃 THE REBOUNDS ---
+    for i = 1, randomizedtimes do
+        pcall(Forward)
+        task.wait(1)
+        pcall(Backward)
+        task.wait(1)
+    end
 
-	local function Backward()
-		local limit = latestRoom.Value
-		for i = limit, 1, -1 do
-			local room = gruh:FindFirstChild(tostring(i))
-			if room and room:FindFirstChild("Nodes") then
-				local nodes = room.Nodes:GetChildren()
-				table.sort(nodes, function(a,b) return tonumber(a.Name) < tonumber(b.Name) end)
-				for n = #nodes, 1, -1 do
-					local node = nodes[n]
-					local distance = (pr.Position - node.Position).magnitude
-					local jerk = game.TweenService:Create(pr, TweenInfo.new(GetTime(distance, ambruhspeed), Enum.EasingStyle.Linear), {CFrame = node.CFrame + ambruhheight})
-					jerk:Play()
-					jerk.Completed:Wait()
-					if ambruhspeed ~= 160 then ambruhspeed = 160 end
-				end
-			end
-		end
-	end
-
-	-- --- 🏃 THE REBOUNDS ---
-	for i = 1, randomizedtimes do
-		pcall(Forward)
-		task.wait(1)
-		pcall(Backward)
-		task.wait(1)
-	end
-	entity:Destroy()
-    local light = Instance.new("ColorCorrectionEffect")
-    light.Parent = game.Lighting
-    light.Brightness = -0.4
-    light.Saturation = 0.4
-    light.Contrast = -0.5
+    entity:Destroy()
+    
+    local light = Instance.new("ColorCorrectionEffect", game.Lighting)
+    light.Brightness, light.Saturation, light.Contrast = -0.4, 0.4, -0.5
     light.TintColor = Color3.fromRGB(255, 0, 0)
+    
     game.TweenService:Create(light, TweenInfo.new(20), {
-        Brightness = 0,
-        Contrast = 0,
-        Saturation = 0,
-        TintColor = Color3.fromRGB(255, 255, 255)
-    }):Play() game.Debris:AddItem(light, 20)
+        Brightness = 0, Contrast = 0, Saturation = 0, TintColor = Color3.fromRGB(255, 255, 255)
+    }):Play()
+    
+    game.Debris:AddItem(light, 20)
     camShake:ShakeOnce(23, 45, 0, 16, 1, 6)
 end)
