@@ -190,7 +190,7 @@
 	end)
 
 	local function LoadEntity(name)
-		if workspace:FindFirstChild("SeekMovingNewClone") or workspace:FindFirstChild("SeekMoving") then return end
+		if workspace:FindFirstChild("SeekMovingNewClone") or workspace:FindFirstChild("SeekMoving") or LatestRoom.Value == 50 or LatestRoom.Value == 51 or LatestRoom.Value > 52 and LatestRoom.Value < 59 then return end
 		local url = entityURLs[name]
 		if url then task.spawn(function() pcall(function() loadstring(game:HttpGet(url))() end) end) end
 	end
@@ -252,7 +252,7 @@
                     if LatestRoom.Value >= 1 then LatestRoom.Changed:Wait() task.wait(0.5) LoadEntity("Rebound") end
                     SyncWait(c + 450)
                     if LatestRoom.Value >= 1 then LatestRoom.Changed:Wait() task.wait(0.5) LoadEntity("Rebound") end
-                    c = c + 650
+                    c = c + 720
                     task.wait(1)
                 end
             end)
@@ -274,11 +274,11 @@
 			task.spawn(function()
 				local c = 0
 				while true do
-					SyncWait(c + 450)
+					SyncWait(c + 900)
 					LoadEntity("A60")
-					SyncWait(c + 720)
+					SyncWait(c + 2240)
 					LoadEntity("A60")
-					c = c + 720
+					c = c + 3899
 					task.wait(1)
 				end
 			end)
@@ -302,7 +302,7 @@
 				while true do
 					SyncWait(c + 420)
 					LoadEntity("DeerGod")
-					c = c + 500
+					c = c + 800
 					task.wait(1)
 				end
 			end)
