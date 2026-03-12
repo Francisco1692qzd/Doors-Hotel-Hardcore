@@ -107,7 +107,7 @@ task.spawn(function()
                     pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/refs/heads/main/wow!.lua"))() end)
                     
                     task.delay(1.3, function()
-                        v.Character.Humanoid.Health = 0
+                        --v.Character.Humanoid.Health = 0
                         local stats = rep:FindFirstChild("GameStats")
                         if stats and stats:FindFirstChild("Player_".. v.Name) then
                             stats["Player_".. v.Name].Total.DeathCause.Value = "A-60"
