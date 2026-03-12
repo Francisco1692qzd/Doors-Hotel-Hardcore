@@ -5,7 +5,6 @@ local hints = {
 
 local rep = game.ReplicatedStorage
 local remotesFolder = nil
-
 local G = getgenv()
 
 G.LoadGithubModel = function(url)
@@ -31,6 +30,7 @@ task.spawn(function()
         camera.CFrame = camera.CFrame * cf
     end)
     camShake:Start()
+    
     local gameData = game.ReplicatedStorage:WaitForChild("GameData")
     local latestRoom = gameData:WaitForChild("LatestRoom")
     local room = workspace.CurrentRooms:FindFirstChild(tostring(latestRoom.Value))
@@ -43,9 +43,7 @@ task.spawn(function()
 
     if G.LoadGithubModel then
         entity = G.LoadGithubModel(frostURL)
-        if entity then
-            entity.Parent = workspace
-        end
+        if entity then entity.Parent = workspace end
     end
 
     if not entity then return end
@@ -62,12 +60,11 @@ task.spawn(function()
         part.CFrame = randomNode.CFrame * CFrame.new(math.random(5, 10), 6, math.random(5, 10))
     end
 
-    spawn(function()
-        while entity ~= nil and entity.Parent ~= nil do
-            wait(0.5)
-            if shaking == true and turn1 == true then
-                camShake:ShakeOnce(14, 30, 0, 4)
-            end
+    -- Initial Shake Loop
+    task.spawn(function()
+        while entity and entity.Parent and turn1 do
+            task.wait(0.5)
+            if shaking then camShake:ShakeOnce(14, 30, 0, 4) end
         end
     end)
 
@@ -77,12 +74,11 @@ task.spawn(function()
     game.TweenService:Create(static, TweenInfo.new(1.4), {PlaybackSpeed = 0}):Play()
     task.wait(2.8)
 
-    spawn(function()
-        while true do
-        wait(0.5)
-        if shaking == false and turn1 == false then
-            camShake:ShakeOnce(20, 30, 0, 3)
-        end
+    -- Active Shake Loop
+    task.spawn(function()
+        while entity and entity.Parent and active do
+            task.wait(0.5)
+            if not shaking then camShake:ShakeOnce(20, 30, 0, 3) end
         end
     end)
 
@@ -92,42 +88,44 @@ task.spawn(function()
     part.Attachment.Heylois.Enabled = true
     part.Attachment.face.Enabled = true
 
-    -- DAMAGE LOGIC (Fixed Lighter Check)
+    -- [[ THE HEAT DETECTION LOGIC ]]
     task.delay(1.3, function()
-    task.spawn(function()
-        while active and entity and entity.Parent do
-            local char = player.Character
-            if char and char:FindFirstChild("Humanoid") then
-                local lighter = char:FindFirstChild("Lighter")
-                local hasHeat = false
+        task.spawn(function()
+            while active and entity and entity.Parent do
+                local char = player.Character
+                if char and char:FindFirstChild("Humanoid") then
+                    local hasHeat = false
+                    
+                    -- Only check for Lighter or Candle
+                    local tool = char:FindFirstChild("Lighter") or char:FindFirstChild("Candle")
+                    
+                    if tool then
+                        -- Check for active PointLight within the tool
+                        for _, obj in ipairs(tool:GetDescendants()) do
+                            if obj:IsA("PointLight") and obj.Enabled then
+                                hasHeat = true
+                                break
+                            end
+                        end
+                    end
 
-                -- Check if Lighter is equipped AND turned on
-                if lighter and lighter:FindFirstChild("EffectsHolder") then
-                    local fire = lighter.EffectsHolder:FindFirstChild("AttachOn") and lighter.EffectsHolder.AttachOn:FindFirstChild("FireParticles")
-                    if fire and fire.Enabled then
-                        hasHeat = true
+                    if not hasHeat and char.Humanoid.Health > 0 then
+                        char.Humanoid:TakeDamage(10)
+                        
+                        -- Handle Death
+                        if char.Humanoid.Health <= 0 then
+                            pcall(function()
+                                game.ReplicatedStorage.GameStats["Player_".. char.Name].Total.DeathCause.Value = "Frostbite"
+                                local remote = rep:FindFirstChild("Bricks") or rep:FindFirstChild("RemotesFolder")
+                                if remote then firesignal(remote.DeathHint.OnClientEvent, hints) end
+                            end)
+                            break
+                        end
                     end
                 end
-
-                -- If not warm and entity is active, take damage
-                if not hasHeat and char.Humanoid.Health ~= 0 then
-                    char.Humanoid:TakeDamage(10)
-                elseif char.Humanoid.Health == 0 then
-                    game.ReplicatedStorage.GameStats["Player_".. char.Name].Total.DeathCause.Value = "Frostbite"
-                    if rep:FindFirstChild("Bricks") then
-                        remotesFolder = rep.Bricks
-                        firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
-                        return
-                    elseif rep:FindFirstChild("RemotesFolder") then
-                        remotesFolder = rep.Bricks
-                        firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
-                        return
-                    end
-                end
+                task.wait(1)
             end
-            task.wait(1)
-        end
-    end)
+        end)
     end)
 
     -- Wait for player to move to next room
@@ -141,8 +139,5 @@ task.spawn(function()
     part.Attachment.face.Enabled = false
     
     task.wait(2.6)
-    shaking = nil
-    active = nil
     entity:Destroy()
-    entity = nil
 end)
