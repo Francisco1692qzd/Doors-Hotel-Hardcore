@@ -70,7 +70,7 @@ task.spawn(function()
     
     repeat task.wait() until jumare3.TimeLength > 0
     
-    local soundTime = jumare3.TimeLength - 1.6
+    local soundTime = jumare3.TimeLength - 2.4
     local lungeDuration = 0.2 
     local shakeDuration = soundTime - lungeDuration
     
