@@ -321,7 +321,8 @@
 		end
 	end)
 	LatestRoom.Changed:Connect(function()
-		if opened and LatestRoom.Value == 100 then
+		if opened and LatestRoom.Value == 100 and not GaveAchievement then
+			GaveAchievement = true
 			local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
 			if AchievementModule == nil then return end
 			if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
