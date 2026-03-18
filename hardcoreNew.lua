@@ -77,7 +77,10 @@
 		b.Completed:Connect(function() creditGui:Destroy() end)
 	end
 
-	pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))() end)
+	pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/refs/heads/main/AddAchievements.lua"))()
+	end)
 
 	-- [DOOR 0 LOCK]
 	local alreadyExecuted = workspace:FindFirstChild("ExecutedHard")
