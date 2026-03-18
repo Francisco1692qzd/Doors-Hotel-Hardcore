@@ -292,6 +292,7 @@ local function SpawnReb()
     end
 	local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
 	if AchievementModule == nil then return end
+	if workspace:FindFirstChild("ReboundAchievement") then return end
 	if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
 	local dataModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ModulesShared"):WaitForChild("Achievements"))
 	local unlockFunc = require(AchievementModule)
