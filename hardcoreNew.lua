@@ -86,6 +86,7 @@
 	local alreadyExecuted = workspace:FindFirstChild("ExecutedHard")
 	Player.PlayerGui.MainUI.Initiator.Main_Game.Health.Music.Blue.PlaybackSpeed = 0.55
 	Player.PlayerGui.MainUI.Initiator.Main_Game.Health.Music.Blue.SoundId = "rbxassetid://10472612727"
+	local GaveAchievement = false
 
 	if not alreadyExecuted then
 		if LatestRoom.Value ~= 0 then
@@ -317,5 +318,15 @@
 					LoadEntity("Shocker")
 				end
 			end)
+		end
+	end)
+	LatestRoom.Changed:Connect(function()
+		if opened and LatestRoom.Value == 100 then
+			local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
+			if AchievementModule == nil then return end
+			if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
+			local dataModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ModulesShared"):WaitForChild("Achievements"))
+			local unlockFunc = require(AchievementModule)
+			unlockFunc(nil, "HardcoreSurvivor")
 		end
 	end)
