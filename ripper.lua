@@ -280,6 +280,18 @@ if isBossActive() then return end
     wait(1)
     entityPart.Anchored = false
     entityPart.CanCollide = false
+	local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
+	if AchievementModule == nil then return end
+	if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
+	local dataModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ModulesShared"):WaitForChild("Achievements"))
+	local unlockFunc = require(AchievementModule)
+	if not workspace:FindFirstChild("RipperAchievement") then
+		unlockFunc(nil, "Ripper") 
+	end
+	local ObtainedBadge = Instance.new("BoolValue")
+	ObtainedBadge.Name = "RipperAchievement"
+	ObtainedBadge.Value = true
+	ObtainedBadge.Parent = workspace
     game.Debris:AddItem(entity, 5)
 end
 task.spawn(function() pcall(SPAWNHORROR) end)
