@@ -169,5 +169,19 @@ if isBossActive() then return end
     game.Debris:AddItem(entity, 1.5)
     wait(1.5)
     chaseMusic:Destroy()
+	wait(2)
+	local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
+	if AchievementModule == nil then return end
+	if workspace:FindFirstChild("DeerGodAchievement") then return end
+	if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
+	local dataModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ModulesShared"):WaitForChild("Achievements"))
+	local unlockFunc = require(AchievementModule)
+	if not workspace:FindFirstChild("DeerGodAchievement") then
+		unlockFunc(nil, "DeerGod") 
+	end
+	local ObtainedBadge = Instance.new("BoolValue")
+	ObtainedBadge.Name = "DeerGodAchievement"
+	ObtainedBadge.Value = true
+	ObtainedBadge.Parent = workspace
 end
 pcall(DeerGod)
