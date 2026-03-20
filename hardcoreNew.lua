@@ -252,11 +252,11 @@
             task.spawn(function()
                 local c = 0
                 while true do
-                    SyncWait(c + 230)
+                    SyncWait(c + 400)
                     if LatestRoom.Value >= 1 then LatestRoom.Changed:Wait() task.wait(0.5) LoadEntity("Rebound") end
-                    SyncWait(c + 450)
+                    SyncWait(c + 720)
                     if LatestRoom.Value >= 1 then LatestRoom.Changed:Wait() task.wait(0.5) LoadEntity("Rebound") end
-                    c = c + 720
+                    c = c + 1100
                     task.wait(1)
                 end
             end)
