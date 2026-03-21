@@ -167,7 +167,7 @@
 				container.Visible = true
 				if isExhausted then
 					hum:SetAttribute("SpeedBoost", 0)
-					hum.WalkSpeed = 13
+					hum.WalkSpeed = 12
 					stamina = math.min(100, stamina + 0.4)
 					bar.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 					if breathSound and not breathSound.IsPlaying then breathSound:Play() end
