@@ -226,11 +226,11 @@
 			task.spawn(function()
 				local c = 0
 				while true do
-					SyncWait(c + 80)
+					SyncWait(c + 90)
 					if LatestRoom.Value >= 1 then LatestRoom.Changed:Wait() task.wait(0.5) LoadEntity("Ripper") end
-					SyncWait(c + 167)
+					SyncWait(c + 210)
 					if LatestRoom.Value >= 1 then LatestRoom.Changed:Wait() task.wait(0.5) LoadEntity("Ripper") end
-					c = c + 300
+					c = c + 460
 					task.wait(1)
 				end
 			end)
@@ -265,11 +265,11 @@
 			task.spawn(function()
 				local c = 0
 				while true do
-					SyncWait(c + 90)
+					SyncWait(c + 120)
 					LoadEntity("Cease")
-					SyncWait(c + 145)
+					SyncWait(c + 230)
 					LoadEntity("Cease")
-					c = c + 350 
+					c = c + 420 
 					task.wait(1)
 				end
 			end)
