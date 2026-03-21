@@ -291,11 +291,11 @@
 			task.spawn(function()
 				local c = 0
 				while true do
-					SyncWait(c + 455)
+					SyncWait(c + 1100)
 					LoadEntity("Silence")
-					SyncWait(c + 600)
+					SyncWait(c + 2100)
 					LoadEntity("Silence")
-					c = c + 600
+					c = c + 3200
 					task.wait(1)
 				end
 			end)
@@ -304,7 +304,7 @@
 			task.spawn(function()
 				local c = 0
 				while true do
-					SyncWait(c + 420)
+					SyncWait(c + 800)
 					LoadEntity("DeerGod")
 					c = c + 800
 					task.wait(1)
