@@ -254,7 +254,7 @@ if isBossActive() then return end
     for i = 1, latestRoom.Value do
         local room = currentRooms:FindFirstChild(tostring(i))
         if room and room:FindFirstChild("Nodes") then
-            local nodes = room.Nodes
+            local nodes = room:WaitForChild("Nodes", 5)
             for v_idx = 1, #nodes:GetChildren() do
                 local node = nodes:FindFirstChild(tostring(v_idx))
                 if node then
