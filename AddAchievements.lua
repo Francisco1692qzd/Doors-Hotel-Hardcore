@@ -23,18 +23,18 @@ dataModule["HardcoreSurvivor"] = {
 			Desc = "You survived the 100 rooms of Hardcore!",
 			Reason = "Survive until Room 100. Congrats!",
 			Image = Door100Image, -- Custom Icon ID
-            --[[Prize = {
+            Prize = {
                 Knobs = 50,
-                Stardust = 10
-            }--]]
+                Stardust = 1
+            }
 		}
 	end
 }
 dataModule["Rebound"] = {
 	GetInfo = function()
 		return {
-			Title = "Many Reboundings",
-			Desc = "I promise i will come back!",
+			Title = "Out of Rebounds",
+			Desc = "Coming back for more!",
 			Reason = "Encounter Rebound.",
 			Image = "rbxassetid://14889947785"
 		}
@@ -43,9 +43,9 @@ dataModule["Rebound"] = {
 dataModule["Ripper"] = {
 	GetInfo = function()
 		return {
-			Title = "Rip Apart",
+			Title = "Torn Apart",
 			Desc = "Don't Leave Too Early.",
-			Reason = "Encounter Ripper",
+			Reason = "Encounter Ripper.",
 			Image = "rbxassetid://12231244908"
 		}
 	end
