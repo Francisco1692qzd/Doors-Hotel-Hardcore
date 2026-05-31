@@ -30,6 +30,16 @@ dataModule["HardcoreSurvivor"] = {
 		}
 	end
 }
+dataModule["Shocker"] = {
+	GetInfo = function()
+		return {
+			Title = "Shocking Experience",
+			Desc = "Look at me."
+			Reason = "Encounter Shocker."
+			Image = "rbxassetid://94319277869668"
+		}
+	end
+}
 dataModule["Rebound"] = {
 	GetInfo = function()
 		return {
