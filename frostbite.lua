@@ -9,14 +9,44 @@ local G = getgenv()
 
 G.LoadGithubModel = function(url)
     if not (writefile and getcustomasset and request) then return nil end
+    
+    -- Generate consistent filename from URL
+    local function generateFileName(url)
+        local hash = 0
+        for i = 1, #url do
+            hash = (hash * 31 + string.byte(url, i)) % 2^32
+        end
+        return "frost_" .. tostring(hash) .. ".rbxm"
+    end
+    
+    local fileName = generateFileName(url)
+    
+    -- Check if file exists and try to load it
+    local success, exists = pcall(function()
+        return isfile and isfile(fileName)
+    end)
+    
+    if success and exists then
+        local assetId = getcustomasset(fileName)
+        local loadSuccess, result = pcall(function()
+            return game:GetObjects(assetId)[1]
+        end)
+        
+        if loadSuccess and result then
+            return result
+        end
+    end
+    
+    -- Download new model
     local response = request({Url = url, Method = "GET"})
     if response.StatusCode ~= 200 then return nil end
-    local fileName = "frost_" .. tick() .. ".rbxm"
+    
     writefile(fileName, response.Body)
     local assetId = getcustomasset(fileName)
     local success, result = pcall(function()
         return game:GetObjects(assetId)[1]
     end)
+    
     if success and result then return result end
     return nil
 end
