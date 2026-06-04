@@ -126,7 +126,7 @@ if isBossActive() then return end
             end
 
             if v.Character ~= nil and (entityPart.Position - v.Character.HumanoidRootPart.Position).magnitude <= 60 then
-                camShake:ShakeOnce(4.7, 25, 0.5, 2,1,6)
+                camShake:ShakeOnce(2.4, 25, 0.5, 2,1,6)
             end
         end
     end)
