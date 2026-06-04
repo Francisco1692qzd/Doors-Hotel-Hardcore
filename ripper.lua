@@ -187,88 +187,88 @@ if isBossActive() then return end
     end
 
 	pcall(function()
-    task.spawn(function()
-        while entityPart ~= nil and entity ~= nil do wait(0.2)
-            local v = game.Players.LocalPlayer
-            if v.Character ~= nil and v.Character.HumanoidRootPart then
-                if canSeeTarget(v.Character, 50) and not v.Character:GetAttribute("Hiding") then
-                    breakMove = true
-                    local gui = Instance.new("ScreenGui", v:WaitForChild("PlayerGui"))
-                    gui.Name = "Noise"
-                    gui.IgnoreGuiInset = true
-                    local img = Instance.new("ImageLabel", gui)
-                    img.Size = UDim2.new(1, 0, 1, 0)
-                    img.BackgroundTransparency = 1
-                    img.Image = "rbxassetid://236542974"
-                    img.ImageTransparency = 1
+    	task.spawn(function()
+        	while entityPart ~= nil and entity ~= nil do wait(0.2)
+            	local v = game.Players.LocalPlayer
+            	if v.Character ~= nil and v.Character.HumanoidRootPart then
+                	if canSeeTarget(v.Character, 50) and not v.Character:GetAttribute("Hiding") then
+                    	breakMove = true
+                    	local gui = Instance.new("ScreenGui", v:WaitForChild("PlayerGui"))
+                    	gui.Name = "Noise"
+                    	gui.IgnoreGuiInset = true
+                    	local img = Instance.new("ImageLabel", gui)
+                    	img.Size = UDim2.new(1, 0, 1, 0)
+                    	img.BackgroundTransparency = 1
+                    	img.Image = "rbxassetid://236542974"
+                    	img.ImageTransparency = 1
 
-                    coroutine.wrap(function()
-                        local char = v.Character
-                        local ripper = entityPart
-                        local clone = ripper and ripper:Clone()
-                        if not clone then return end
-                        clone.Parent = workspace
-                        clone.Position = ripper.Position
-                        for _, x in ipairs(clone:GetDescendants()) do
-                            if x:IsA("ParticleEmitter") then
-                                spawn(function() x.Rate = 9999; wait(0.25); x.TimeScale = 0.0 end)
-                            elseif x:IsA("Sound") then x.Volume = 0 end
-                        end
-                        entity:Destroy()
-                        local static = Instance.new("Sound", workspace)
-                        static.SoundId = "rbxassetid://372770465"
-                        static.Volume = 10
-                        static.Pitch = 0.7
-                        local anchor = Instance.new("Part", workspace)
-                        anchor.Name = "ripperAnchor"
-                        anchor.Anchored = true
-                        anchor.CanCollide = false
-                        anchor.Transparency = 1
-                        anchor.CFrame = workspace.CurrentCamera.CFrame
-                        char:FindFirstChild("HumanoidRootPart").Anchored = true
-                        workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
-                        local viewLoop = true
-                        spawn(function()
-                            while viewLoop do
-                                workspace.CurrentCamera.CFrame = anchor.CFrame
-                                img.Image = "rbxassetid://"..({8482795900,236542974,184251462,236777652})[math.random(1,4)]
-                                game["Run Service"].RenderStepped:Wait()
-                            end
-                        end)
-                        game.TweenService:Create(anchor, TweenInfo.new(0.3), {CFrame = CFrame.lookAt(anchor.Position, clone.Position)}):Play()
-                        wait(1)
-                        game.TweenService:Create(img, TweenInfo.new(2), {ImageTransparency = 0}):Play()
-                        static:Play()
-                        wait(2)
-                        viewLoop = false
-                        game.TweenService:Create(img, TweenInfo.new(1), {ImageTransparency = 1}):Play()
-                        static:Destroy()
-                        char:FindFirstChild("HumanoidRootPart").Anchored = false
-                        game.ReplicatedStorage.GameStats["Player_" .. v.Character.Name].Total.DeathCause.Value = "Ripper"
-                        game.ReplicatedStorage.GameStats["Player_" .. v.Character.Name]["1"].DeathCause.Value = "Ripper"
-                        char:FindFirstChildWhichIsA("Humanoid"):TakeDamage(100)
-                        local hints = {
-                            "You died to who you call Ripper...",
-                            "He screams so making you know his presence is here...",
-                            "Hide when this happens!"
-                        }
-                        	if ReplicatedStorage:FindFirstChild("RemotesFolder") then
-								local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
-			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
-							elseif ReplicatedStorage:FindFirstChild("Bricks") then
-								local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
-			                    firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
-							end
-                    end)()
-                end
-            end
-            if v.Character ~= nil and v.Character.HumanoidRootPart and (entityPart.Position - v.Character.HumanoidRootPart.Position).magnitude <= 60 then
-                camShake:Start()
-                camShake:ShakeOnce(15, 25, 0, 2, 1, 6)
-            end
-            if breakMove then break end
-        end
-    end)
+                    	coroutine.wrap(function()
+                        	local char = v.Character
+                        	local ripper = entityPart
+                        	local clone = ripper and ripper:Clone()
+                        	if not clone then return end
+                        	clone.Parent = workspace
+                        	clone.Position = ripper.Position
+                        	for _, x in ipairs(clone:GetDescendants()) do
+                            	if x:IsA("ParticleEmitter") then
+                                	spawn(function() x.Rate = 9999; wait(0.25); x.TimeScale = 0.0 end)
+                            	elseif x:IsA("Sound") then x.Volume = 0 end
+                        	end
+                        	entity:Destroy()
+                        	local static = Instance.new("Sound", workspace)
+                        	static.SoundId = "rbxassetid://372770465"
+                        	static.Volume = 10
+                        	static.Pitch = 0.7
+                        	local anchor = Instance.new("Part", workspace)
+                        	anchor.Name = "ripperAnchor"
+                        	anchor.Anchored = true
+                        	anchor.CanCollide = false
+                        	anchor.Transparency = 1
+                        	anchor.CFrame = workspace.CurrentCamera.CFrame
+                        	char:FindFirstChild("HumanoidRootPart").Anchored = true
+                        	workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+                        	local viewLoop = true
+                        	spawn(function()
+                            	while viewLoop do
+                                	workspace.CurrentCamera.CFrame = anchor.CFrame
+                                	img.Image = "rbxassetid://"..({8482795900,236542974,184251462,236777652})[math.random(1,4)]
+                                	game["Run Service"].RenderStepped:Wait()
+                            	end
+                        	end)
+                        	game.TweenService:Create(anchor, TweenInfo.new(0.3), {CFrame = CFrame.lookAt(anchor.Position, clone.Position)}):Play()
+                        	wait(1)
+                        	game.TweenService:Create(img, TweenInfo.new(2), {ImageTransparency = 0}):Play()
+                        	static:Play()
+                        	wait(2)
+                        	viewLoop = false
+                        	game.TweenService:Create(img, TweenInfo.new(1), {ImageTransparency = 1}):Play()
+                        	static:Destroy()
+                        	char:FindFirstChild("HumanoidRootPart").Anchored = false
+                        	game.ReplicatedStorage.GameStats["Player_" .. v.Character.Name].Total.DeathCause.Value = "Ripper"
+                        	game.ReplicatedStorage.GameStats["Player_" .. v.Character.Name]["1"].DeathCause.Value = "Ripper"
+                        	char:FindFirstChildWhichIsA("Humanoid"):TakeDamage(100)
+                        	local hints = {
+                            	"You died to who you call Ripper...",
+                            	"He screams so making you know his presence is here...",
+                            	"Hide when this happens!"
+                        	}
+                        		if ReplicatedStorage:FindFirstChild("RemotesFolder") then
+									local remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
+			                    	firesignal(remotesFolder.DeathHint.OnClientEvent, hints, "Blue")
+								elseif ReplicatedStorage:FindFirstChild("Bricks") then
+									local remotesFolder = ReplicatedStorage:FindFirstChild("Bricks")
+			                    	firesignal(remotesFolder.DeathHint.OnClientEvent, hints)
+								end
+                    	end)()
+                	end
+            	end
+            	if v.Character ~= nil and v.Character.HumanoidRootPart and (entityPart.Position - v.Character.HumanoidRootPart.Position).magnitude <= 60 then
+                	--camShake:Start()
+                	camShake:ShakeOnce(15, 25, 0, 2, 1, 6)
+            	end
+            	if breakMove then break end
+        	end
+    	end)
 	end)
 
     -- MOVIMENTO POR NODES ORIGINAL
@@ -282,27 +282,27 @@ if isBossActive() then return end
     ambruhspeed = DEF_SPEED
 
 	pcall(function()
-    for i = 1, latestRoom.Value do
-        local room = currentRooms:FindFirstChild(tostring(i))
-        if room and room:FindFirstChild("Nodes") then
-            local nodes = room:WaitForChild("Nodes", 5)
-            for v_idx = 1, #nodes:GetChildren() do
-                local node = nodes:FindFirstChild(tostring(v_idx))
-                if node then
-                    if breakMove then break end
-                    local dist = (entityPart.Position - node.Position).magnitude
-                    local bruh = game.TweenService:Create(entityPart, TweenInfo.new(GetTime(dist, ambruhspeed), Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0,false,0), {CFrame = node.CFrame + ambruhheight})
-                    bruh:Play()
-                    bruh.Completed:Wait()
-                    ambruhspeed = storer
-                    if room.Name == nodes.Parent.Name then
-                        pcall(function() room.Door.ClientOpen:FireServer() end)
-                    end
-                end
-            end
-        end
-        if breakMove then break end
-    end
+    	for i = 1, latestRoom.Value do
+        	local room = currentRooms:FindFirstChild(tostring(i))
+        	if room and room:FindFirstChild("Nodes") then
+            	local nodes = room:WaitForChild("Nodes", 5)
+           	 	for v_idx = 1, #nodes:GetChildren() do
+                	local node = nodes:FindFirstChild(tostring(v_idx))
+                	if node then
+                    	if breakMove then break end
+                    	local dist = (entityPart.Position - node.Position).magnitude
+                    	local bruh = game.TweenService:Create(entityPart, TweenInfo.new(GetTime(dist, ambruhspeed), Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0,false,0), {CFrame = node.CFrame + ambruhheight})
+                    	bruh:Play()
+                    	bruh.Completed:Wait()
+                    	ambruhspeed = storer
+                    	if room.Name == nodes.Parent.Name then
+                        	pcall(function() room.Door.ClientOpen:FireServer() end)
+                    	end
+	                end
+            	end
+        	end
+        	if breakMove then break end
+    	end
 	end)
 	
     camShake:Shake(result.Presets.Explosion)
