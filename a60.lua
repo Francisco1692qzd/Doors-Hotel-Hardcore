@@ -3,6 +3,7 @@ local hints = {
 }
 
 local rep = game.ReplicatedStorage
+local G = getgenv()
 
 -- [[ FORCE LOAD: Retries 20 times to bypass Roblox asset loading lag ]]
 local function loadModel(id)
@@ -57,7 +58,7 @@ G.LoadGithubAudio = function(url)
         end)
         
         if assetSuccess then
-            print("✅ Áudio Rebound carregado do cache!")
+            --print("✅ Áudio Rebound carregado do cache!")
             return assetId
         end
     end
@@ -72,7 +73,7 @@ G.LoadGithubAudio = function(url)
     })
 
     if response.StatusCode ~= 200 then
-        warn("Xeno: Falha no download. Status: " .. response.StatusCode)
+        --warn("Xeno: Falha no download. Status: " .. response.StatusCode)
         return nil
     end
     
@@ -83,11 +84,11 @@ G.LoadGithubAudio = function(url)
     end)
 
     if success then
-        print("✅ Áudio Rebound carregado com sucesso!")
+        --print("✅ Áudio Rebound carregado com sucesso!")
         return assetId
     end
     
-    warn("Erro no getcustomasset: " .. tostring(assetId))
+    --warn("Erro no getcustomasset: " .. tostring(assetId))
     return nil
 end
 
@@ -241,6 +242,46 @@ task.spawn(function()
     entity:Destroy()
 
 	local stingDissapear = G.LoadGithubAudio("https://raw.githubusercontent.com/Francisco1692qzd/RevivedOldHardcore/main/Multimonster_sting.mp3.mpeg")
+	task.spawn(function()
+    	local AchievementModule = game.Players.LocalPlayer.PlayerGui:FindFirstChild("MainUI")
+    	if AchievementModule then
+        	AchievementModule = AchievementModule:FindFirstChild("Initiator")
+        	if AchievementModule then
+            	AchievementModule = AchievementModule:FindFirstChild("Main_Game")
+            	if AchievementModule then
+                	AchievementModule = AchievementModule:FindFirstChild("RemoteListener")
+                	if AchievementModule then
+                    	AchievementModule = AchievementModule:FindFirstChild("Modules")
+                    	if AchievementModule then
+                       	 	AchievementModule = AchievementModule:FindFirstChild("AchievementUnlock")
+                    	end
+                	end
+            	end
+        	end
+    	end
+    
+    	if AchievementModule == nil then return end
+    
+    	if workspace:FindFirstChild("A60Achievement") then return end
+    
+    	local modulesShared = game.ReplicatedStorage:FindFirstChild("ModulesShared")
+    	if not modulesShared then return end
+    
+    	local achievements = modulesShared:FindFirstChild("Achievements")
+    	if not achievements then return end
+    
+    	local dataModule = require(achievements)
+    	local unlockFunc = require(AchievementModule)
+    
+    	if not workspace:FindFirstChild("A60Achievement") then
+        	unlockFunc(nil, "Multimonster") 
+    	end
+    
+    	local ObtainedBadge = Instance.new("BoolValue")
+    	ObtainedBadge.Name = "A60Achievement"
+    	ObtainedBadge.Value = true
+   	 	ObtainedBadge.Parent = workspace
+	end)
     local light = Instance.new("ColorCorrectionEffect", game.Lighting)
     light.Brightness, light.Saturation, light.Contrast = -0.4, 0.4, -0.5
     light.TintColor = Color3.fromRGB(255, 0, 0)
@@ -254,19 +295,5 @@ task.spawn(function()
 	local sting = Instance.new("Sound", workspace)
 	sting.SoundId = stingDissapear
 	sting.Volume = 2
-	sting.PlaybackSpeed = 1.15
-    task.wait(6)
-    local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
-	if AchievementModule == nil then return end
-	if workspace:FindFirstChild("A60Achievement") then return end
-	if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
-	local dataModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ModulesShared"):WaitForChild("Achievements"))
-	local unlockFunc = require(AchievementModule)
-	if not workspace:FindFirstChild("A60Achievement") then
-		unlockFunc(nil, "Multimonster") 
-	end
-	local ObtainedBadge = Instance.new("BoolValue")
-	ObtainedBadge.Name = "A60Achievement"
-	ObtainedBadge.Value = true
-	ObtainedBadge.Parent = workspace
+	sting.PlaybackSpeed = 1.16
 end)
