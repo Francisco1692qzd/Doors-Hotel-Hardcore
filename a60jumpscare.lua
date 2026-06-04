@@ -10,6 +10,33 @@ local G = getgenv()
 
 G.LoadGithubAudio = function(url)
     if not (writefile and getcustomasset and request) then return nil end
+    
+    -- Generate consistent filename from URL
+    local function generateFileName(url)
+        local hash = 0
+        for i = 1, #url do
+            hash = (hash * 31 + string.byte(url, i)) % 2^32
+        end
+        return "A60Jumpscare_" .. tostring(hash) .. ".mp3"
+    end
+    
+    local fileName = generateFileName(url)
+    
+    -- Check if file exists and return it
+    local success, exists = pcall(function()
+        return isfile and isfile(fileName)
+    end)
+    
+    if success and exists then
+        local assetSuccess, assetId = pcall(function()
+            return getcustomasset(fileName)
+        end)
+        
+        if assetSuccess then
+            return assetId
+        end
+    end
+    
     local cleanUrl = url .. "?t=" .. math.random(1, 100000)
     local response = request({
         Url = cleanUrl,
@@ -22,7 +49,6 @@ G.LoadGithubAudio = function(url)
         return nil
     end
 
-    local fileName = "A60Jumpscare_" .. tick() .. ".mp3"
     writefile(fileName, response.Body)
     
     local success, assetId = pcall(function()
