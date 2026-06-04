@@ -39,8 +39,10 @@ end
 
 local HardcoreSurvivorAchievement = "https://github.com/Francisco1692qzd/AchievementsImages/blob/main/Door100Achievement.png"
 local SilenceAchievement = "https://github.com/Francisco1692qzd/AchievementsImages/blob/main/silenceachievement.png"
+local MultimonsterAchievement = "https://github.com/Francisco1692qzd/AchievementsImages/blob/main/a60achievement.png"
 local Door100Image = ImageLoader(HardcoreSurvivorAchievement)
 local silenceImage = ImageLoader(SilenceAchievement)
+local MultimonsterImage = ImageLoader(MultimonsterAchievement)
 
 dataModule["HardcoreSurvivor"] = {
 	GetInfo = function()
@@ -104,10 +106,21 @@ dataModule["DeerGod"] = {
 dataModule["Silence"] = {
 	GetInfo = function()
 		return {
-			Title = "Eyes Closed Ears Open",
-			Desc = "Better Hear or not",
-			Reason = "Stay Silent to Encounter Silence!",
+			Title = "Careful Listener",
+			Desc = "Shhh.. do you hear that?",
+			Reason = "Successfully encounter Silence",
 			Image = silenceImage
+		}
+	end
+}
+
+dataModule["Multimonster"] = {
+	GetInfo = function()
+		return {
+			Title = "A Nostalgic Fright",
+			Desc = "So many familiar faces!",
+			Reason = "Encounter Multimonster (known as A-60).",
+			Image = MultimonsterImage
 		}
 	end
 }
