@@ -46,7 +46,7 @@ G.LoadGithubModel = function(url)
     end
     local response = request({Url = url, Method = "GET"})
     if response.StatusCode ~= 200 then return nil end
-    local fileName = "temp_model_" .. tick() .. ".rbxm"
+    local fileName = "rebound_" .. tick() .. ".rbxm"
     writefile(fileName, response.Body)
     local assetId = getcustomasset(fileName)
     local success, result = pcall(function()
