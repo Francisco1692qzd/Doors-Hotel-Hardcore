@@ -5,11 +5,36 @@ local remotesFolder = nil
 G.LoadGithubAudio = function(url)
     if not (writefile and getcustomasset and request) then return nil end
 
-    -- Bypass de Cache: Adiciona um número aleatório ao final para forçar o download limpo
-    local cleanUrl = url .. "?t=" .. math.random(1, 100000)
+    -- Generate consistent filename from URL
+    local function generateFileName(url)
+        local hash = 0
+        for i = 1, #url do
+            hash = (hash * 31 + string.byte(url, i)) % 2^32
+        end
+        return "rebound_fix_" .. tostring(hash) .. ".mp3"
+    end
+    
+    local fileName = generateFileName(url)
+    
+    -- Check if file exists and return it
+    local success, exists = pcall(function()
+        return isfile and isfile(fileName)
+    end)
+    
+    if success and exists then
+        local assetSuccess, assetId = pcall(function()
+            return getcustomasset(fileName)
+        end)
+        
+        if assetSuccess then
+            print("✅ Áudio Rebound carregado do cache!")
+            return assetId
+        end
+    end
 
+    -- Download new audio if not exists
     local response = request({
-        Url = cleanUrl,
+        Url = url,  -- Removed the cache bypass timestamp
         Method = "GET",
         Headers = {
             ["Accept"] = "audio/mpeg, audio/ogg, application/octet-stream"
@@ -20,11 +45,7 @@ G.LoadGithubAudio = function(url)
         warn("Xeno: Falha no download. Status: " .. response.StatusCode)
         return nil
     end
-
-    -- Nome único para evitar conflitos de escrita
-    local fileName = "rebound_fix_" .. tick() .. ".mp3"
     
-    -- Salva e força a leitura
     writefile(fileName, response.Body)
     
     local success, assetId = pcall(function()
