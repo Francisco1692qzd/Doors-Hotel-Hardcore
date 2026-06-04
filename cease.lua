@@ -18,7 +18,7 @@ G.LoadGithubModel = function(url)
 end
 
 local function ceasetheroom()
-    local ambruhspeed = 40
+    local ambruhspeed = 45
     local DEF_SPEED = 9999
     local storer = ambruhspeed
     local ambruhheight = Vector3.new(0, 3.4, 0)
@@ -126,7 +126,7 @@ if isBossActive() then return end
             end
 
             if v.Character ~= nil and (entityPart.Position - v.Character.HumanoidRootPart.Position).magnitude <= 60 then
-                camShake:ShakeOnce(7, 25, 0.5, 1.1,1,6)
+                camShake:ShakeOnce(4.7, 25, 0.5, 2,1,6)
             end
         end
     end)
