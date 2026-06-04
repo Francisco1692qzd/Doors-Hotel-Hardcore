@@ -32,6 +32,65 @@ local function loadModel(id)
     return obj
 end
 
+G.LoadGithubAudio = function(url)
+    if not (writefile and getcustomasset and request) then return nil end
+
+    -- Generate consistent filename from URL
+    local function generateFileName(url)
+        local hash = 0
+        for i = 1, #url do
+            hash = (hash * 31 + string.byte(url, i)) % 2^32
+        end
+        return "multimonster_" .. tostring(hash) .. ".mpeg"  -- Fixed: removed .mp3
+    end
+    
+    local fileName = generateFileName(url)
+    
+    -- Check if file exists and return it
+    local success, exists = pcall(function()
+        return isfile and isfile(fileName)
+    end)
+    
+    if success and exists then
+        local assetSuccess, assetId = pcall(function()
+            return getcustomasset(fileName)
+        end)
+        
+        if assetSuccess then
+            print("✅ Áudio Rebound carregado do cache!")
+            return assetId
+        end
+    end
+
+    -- Download new audio if not exists
+    local response = request({
+        Url = url,
+        Method = "GET",
+        Headers = {
+            ["Accept"] = "audio/mpeg, audio/ogg, application/octet-stream"
+        }
+    })
+
+    if response.StatusCode ~= 200 then
+        warn("Xeno: Falha no download. Status: " .. response.StatusCode)
+        return nil
+    end
+    
+    writefile(fileName, response.Body)
+    
+    local success, assetId = pcall(function()
+        return getcustomasset(fileName)
+    end)
+
+    if success then
+        print("✅ Áudio Rebound carregado com sucesso!")
+        return assetId
+    end
+    
+    warn("Erro no getcustomasset: " .. tostring(assetId))
+    return nil
+end
+
 local function isBossActive()
     local gameData = game.ReplicatedStorage:FindFirstChild("GameData")
     if not gameData then return false end
@@ -180,7 +239,8 @@ task.spawn(function()
     end
 
     entity:Destroy()
-    
+
+	local stingDissapear = G.LoadGithubAudio("https://raw.githubusercontent.com/Francisco1692qzd/RevivedOldHardcore/main/Multimonster_sting.mp3.mpeg")
     local light = Instance.new("ColorCorrectionEffect", game.Lighting)
     light.Brightness, light.Saturation, light.Contrast = -0.4, 0.4, -0.5
     light.TintColor = Color3.fromRGB(255, 0, 0)
@@ -191,6 +251,10 @@ task.spawn(function()
     
     game.Debris:AddItem(light, 20)
     camShake:ShakeOnce(23, 45, 0, 16, 1, 6)
+	local sting = Instance.new("Sound", workspace)
+	sting.SoundId = stingDissapear
+	sting.Volume = 2
+	sting.PlaybackSpeed = 1.15
     task.wait(6)
     local AchievementModule = game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.AchievementUnlock
 	if AchievementModule == nil then return end
