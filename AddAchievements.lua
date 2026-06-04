@@ -3,18 +3,44 @@ if AchievementModule == nil then return end
 if not game.ReplicatedStorage:FindFirstChild("ModulesShared") then return end
 local dataModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ModulesShared"):WaitForChild("Achievements"))
 local unlockFunc = require(AchievementModule)
-local function ImageLoader(url)
-	if not (writefile and getcustomasset and request) then return nil end
-	local rawUrl = url:gsub("github.com", "raw.githubusercontent.com"):gsub("/blob/", "/")
-	local response = request({Url = rawUrl, Method = "GET"})
-	if response.StatusCode ~= 200 then return nil end
 
-	local fileName = "LoadedImageAchievement_" .. tick() .. ".png"
-	writefile(fileName, response.Body)
-	return getcustomasset(fileName)
+local function ImageLoader(url)
+    if not (writefile and getcustomasset and request) then return nil end
+    
+    local rawUrl = url:gsub("github.com", "raw.githubusercontent.com"):gsub("/blob/", "/")
+    
+    -- Generate consistent filename from URL
+    local function generateFileName(url)
+        local hash = 0
+        for i = 1, #url do
+            hash = (hash * 31 + string.byte(url, i)) % 2^32
+        end
+        return "LoadedImageAchievement_" .. tostring(hash) .. ".png"
+    end
+    
+    local fileName = generateFileName(rawUrl)
+    
+    -- Check if file exists and return it
+    local success, exists = pcall(function()
+        return isfile and isfile(fileName)
+    end)
+    
+    if success and exists then
+        return getcustomasset(fileName)
+    end
+    
+    -- Download new image if not exists
+    local response = request({Url = rawUrl, Method = "GET"})
+    if response.StatusCode ~= 200 then return nil end
+    
+    writefile(fileName, response.Body)
+    return getcustomasset(fileName)
 end
+
 local HardcoreSurvivorAchievement = "https://github.com/Francisco1692qzd/AchievementsImages/blob/main/Door100Achievement.png"
+local SilenceAchievement = "https://github.com/Francisco1692qzd/AchievementsImages/blob/main/silenceachievement.png"
 local Door100Image = ImageLoader(HardcoreSurvivorAchievement)
+local silenceImage = ImageLoader(SilenceAchievement)
 
 dataModule["HardcoreSurvivor"] = {
 	GetInfo = function()
@@ -30,6 +56,7 @@ dataModule["HardcoreSurvivor"] = {
 		}
 	end
 }
+
 dataModule["Shocker"] = {
 	GetInfo = function()
 		return {
@@ -40,16 +67,18 @@ dataModule["Shocker"] = {
 		}
 	end
 }
+
 dataModule["Rebound"] = {
 	GetInfo = function()
 		return {
-			Title = "Out of Rebounds",
-			Desc = "Coming back for more!",
+			Title = "Out of Many Rebounds",
+			Desc = "Back for more!",
 			Reason = "Encounter Rebound.",
 			Image = "rbxassetid://14889947785"
 		}
 	end
 }
+
 dataModule["Ripper"] = {
 	GetInfo = function()
 		return {
@@ -60,6 +89,7 @@ dataModule["Ripper"] = {
 		}
 	end
 }
+
 dataModule["DeerGod"] = {
 	GetInfo = function()
 		return {
@@ -70,16 +100,16 @@ dataModule["DeerGod"] = {
 		}
 	end
 }
+
 dataModule["Silence"] = {
 	GetInfo = function()
 		return {
 			Title = "Eyes Closed Ears Open",
 			Desc = "Better Hear or not",
 			Reason = "Stay Silent to Encounter Silence!",
-			Image = "rbxassetid://14168722837"
+			Image = silenceImage
 		}
 	end
 }
-
 	--unlockFunc(nil, "Idiot")
 print("Achievements Created Successfully")
