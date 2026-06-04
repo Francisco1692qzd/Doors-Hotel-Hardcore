@@ -63,7 +63,7 @@ local function Rebound()
     local plusRoom = latestRoom.Value + 1
     local currentRooms = workspace.CurrentRooms
     local killed = false
-    local speed = 2.2
+    local speed = 2
     local entity = nil
     local cameraShaker = require(game.ReplicatedStorage.CameraShaker)
     local camera = workspace.CurrentCamera
@@ -237,7 +237,7 @@ if isBossActive() then return end
 
             if entityPart and (entityPart.Position - v.Character.HumanoidRootPart.Position).Magnitude <= 60 then
                 camShake:Start()
-                camShake:ShakeOnce(17, 6, 0.1, 1)
+                camShake:ShakeOnce(17, 9, 0, 2,1,6)
             end
         end
     end)
