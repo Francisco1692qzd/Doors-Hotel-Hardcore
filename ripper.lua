@@ -52,6 +52,32 @@ end
 G.LoadGithubAudio = function(url)
     if not (writefile and getcustomasset and request) then return nil end
 
+    -- Generate consistent filename from URL
+    local function generateFileName(url)
+        local hash = 0
+        for i = 1, #url do
+            hash = (hash * 31 + string.byte(url, i)) % 2^32
+        end
+        return "ripper_" .. tostring(hash) .. ".mp3"
+    end
+    
+    local fileName = generateFileName(url)
+    
+    -- Check if file exists and return it
+    local success, exists = pcall(function()
+        return isfile and isfile(fileName)
+    end)
+    
+    if success and exists then
+        local assetSuccess, assetId = pcall(function()
+            return getcustomasset(fileName)
+        end)
+        
+        if assetSuccess then
+            return assetId
+        end
+    end
+
     -- Bypass de Cache: Adiciona um número aleatório ao final para forçar o download limpo
     local cleanUrl = url .. "?t=" .. math.random(1, 100000)
 
@@ -67,9 +93,6 @@ G.LoadGithubAudio = function(url)
         warn("Xeno: Falha no download. Status: " .. response.StatusCode)
         return nil
     end
-
-    -- Nome único para evitar conflitos de escrita
-    local fileName = "rebound_fix_" .. tick() .. ".mp3"
     
     -- Salva e força a leitura
     writefile(fileName, response.Body)
@@ -79,11 +102,11 @@ G.LoadGithubAudio = function(url)
     end)
 
     if success then
-        print("✅ Áudio Rebound carregado com sucesso!")
+        --print("✅ Áudio Rebound carregado com sucesso!")
         return assetId
     end
     
-    warn("Erro no getcustomasset: " .. tostring(assetId))
+    --warn("Erro no getcustomasset: " .. tostring(assetId))
     return nil
 end
 
@@ -111,6 +134,7 @@ local function SPAWNHORROR()
     camShake:Shake(result.Presets.Earthquake)
 	end)
 	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper2.rbxm"
+	local gameCrashURL = "https://raw.githubusercontent.com/DripCapybara/Doors-Modes/main/HardcoreMode/game%20crash%20sound.mp3"
 	
 	if G.LoadGithubModel then
         entity = G.LoadGithubModel(rawURL)
@@ -215,6 +239,10 @@ if isBossActive() then return end
                             	elseif x:IsA("Sound") then x.Volume = 0 end
                         	end
                         	entity:Destroy()
+							local crash = Instance.new("Sound", workspace)
+							crash.SoundId = G.LoadGithubAudio(gameCrashURL)
+							crash.Volume = 4
+							crash:Play()
                         	local static = Instance.new("Sound", workspace)
                         	static.SoundId = "rbxassetid://372770465"
                         	static.Volume = 10
