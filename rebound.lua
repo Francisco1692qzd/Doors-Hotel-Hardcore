@@ -262,16 +262,15 @@ if isBossActive() then return end
                             wait(0.3)
                             Plr.Character:FindFirstChildWhichIsA("Humanoid"):TakeDamage(100)
                             game.ReplicatedStorage.GameStats["Player_" .. Plr.Character.Name].Total.DeathCause.Value = "Rebound"
-                            game.ReplicatedStorage.GameStats["Player_" .. Plr.Character.Name]["1"].DeathCause.Value = "Rebound"
                             --[[game.ReplicatedStorage.Bricks.DeathHint.OnClientEvent:Fire({
                                 "You died to who you call Rebound...",
                                 "He makes his presence known and keeps coming back...",
                                 "Hide when this happens!"
                             })--]]
 							local hints = {
-								"Avoid looking at it completely!",
-								"He may trick you by coming through rooms again...",
-								"Find a hide spot!"
+								"You died to the entity designated as Rebound...",
+								"He could trick you by coming through the next doors in the next few seconds!",
+								"Whenever this happens, do not go forward, stay on your desired hiding spot!"
 							}
 							if ReplicatedStorage:FindFirstChild("RemotesFolder") then
 								remotesFolder = ReplicatedStorage:FindFirstChild("RemotesFolder")
@@ -302,7 +301,7 @@ if isBossActive() then return end
             local room = currentRooms[i]
             if room and room:FindFirstChild("RoomEntrance") then
                 local abc = room:FindFirstChild("RoomEntrance")
-                local jerk = game.TweenService:Create(entityPart, TweenInfo.new(speed, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0,false,0), {CFrame = abc.CFrame})
+                local jerk = game.TweenService:Create(entityPart, TweenInfo.new(speed, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0,false,0), {CFrame = abc.CFrame + Vector3.new(0,0.6,0)})
                 jerk:Play()
                 jerk.Completed:Wait()
             end
