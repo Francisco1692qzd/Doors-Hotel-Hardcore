@@ -145,7 +145,7 @@ local function Rebound()
         return currentRooms:FindFirstChild(plusRoom)
     end
     local entityPart = entity.PrimaryPart or entity:FindFirstChildWhichIsA("BasePart")
-    entityPart.CFrame = GetLastRoom().RoomExit.CFrame
+    entityPart.CFrame = GetLastRoom().RoomExit.CFrame + Vector3.new(0,0.6,0)
     entityPart.CanCollide = false
     entityPart.Anchored = true
     wait(4)
