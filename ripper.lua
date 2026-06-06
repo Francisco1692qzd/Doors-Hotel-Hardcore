@@ -133,7 +133,7 @@ local function SPAWNHORROR()
     camShake:Start()
     camShake:Shake(result.Presets.Earthquake)
 	end)
-	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper2.rbxm"
+	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
 	local gameCrashURL = "https://raw.githubusercontent.com/DripCapybara/Doors-Modes/main/HardcoreMode/game%20crash%20sound.mp3"
 	
 	if G.LoadGithubModel then
@@ -273,7 +273,6 @@ if isBossActive() then return end
                         	static:Destroy()
                         	char:FindFirstChild("HumanoidRootPart").Anchored = false
                         	game.ReplicatedStorage.GameStats["Player_" .. v.Character.Name].Total.DeathCause.Value = "Ripper"
-                        	game.ReplicatedStorage.GameStats["Player_" .. v.Character.Name]["1"].DeathCause.Value = "Ripper"
                         	char:FindFirstChildWhichIsA("Humanoid"):TakeDamage(100)
                         	local hints = {
                             	"You died to who you call Ripper...",
