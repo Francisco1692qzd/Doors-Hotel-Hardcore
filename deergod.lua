@@ -175,6 +175,12 @@ if isBossActive() then return end
             end
         end
     end)
+	spawn(function()
+        while entity ~= nil and entityPart ~= nil do wait(1.6)
+			if entity.Parent ~= nil and entityPart.Parent ~= nil then
+				camShake:Shake(cameraShaker.Presets.Earthquake)
+			end
+		end
 
     ambruhspeed = DEF_SPEED
     for i = 1, latestRoom.Value + 1 do
