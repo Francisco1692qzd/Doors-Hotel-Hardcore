@@ -110,6 +110,12 @@ local function DeerGod()
     chaseMusic.Volume = 3
     chaseMusic.Looped = true
     chaseMusic:Play()
+	local cameraShaker = require(game.ReplicatedStorage.CameraShaker)
+	local camera = workspace.CurrentCamera
+	local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
+		camera.CFrame = camera.CFrame * cf
+	end)
+	camShake:Start()
 
     if not entity then return end
 
@@ -181,6 +187,7 @@ if isBossActive() then return end
 				camShake:Shake(cameraShaker.Presets.Earthquake)
 			end
 		end
+	end)
 
     ambruhspeed = DEF_SPEED
     for i = 1, latestRoom.Value + 1 do
