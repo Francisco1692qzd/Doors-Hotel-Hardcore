@@ -126,6 +126,7 @@ task.spawn(function()
     local DEF_SPEED = 9999
     local randomizedtimes = math.random(4, 9)
     local killed = false
+	local PlayerGui = game.Players.LocalPlayer.PlayerGui
 
     local entity = loadModel(15972282065) -- The 20-attempt loop starts here
     if not entity then return end
@@ -137,6 +138,50 @@ task.spawn(function()
     local function GetTime(dist, speed)
         return dist / speed
     end
+
+	spawn(function()
+		if not rep:FindFirstChild("ModulesClient") then return end
+		-- if not rep:FindFirstChild("FloorReplicated") then return end
+		local ROOT = "https://github.com/RegularVynixu/DOORS-Entity-Spawner-V2/raw/main"
+		local Assets = {
+			Repentance = LoadCustomInstance(ROOT.."/Assets/Repentance.rbxm"),
+			Earthquake = LoadCustomInstance(ROOT.."/Assets/Earthquake.rbxm")
+		}
+		local Modules = {
+			Module_Events = require(rep.ModulesClient.Module_Events :: ModuleScript),
+			Main_Game = require(PlayerGui.MainUI.Initiator.Main_Game :: ModuleScript)
+		}
+		local Storage = {
+    		Ambient = {},
+			DeathTypes = {
+				["Yellow"] = {"yellow", "curious"},
+				["Blue"] = {"blue", "guiding"}
+			}
+		}
+		local function Earthquake()
+    		Modules.Main_Game.camShaker:ShakeOnce(4, 12, 1, 5)
+    		Modules.Main_Game.camShaker:ShakeOnce(10, 2, 3, 3)
+    		Assets.Earthquake.SoundEarthquake:Play()
+    		local v5 = CollectionService:GetTagged("PartCeiling")
+    		local v6 = {}
+    		for _, v7 in v5 do
+        		local v8 = v7.Size.Magnitude * 0.7
+        		local v9 = math.clamp(v8, 0, 150)
+        		for _, v10 in Assets.Earthquake.Particles:GetChildren() do
+            		local v11 = v10:Clone()
+            		v11.Parent = v7
+            		v11:Emit(v9 / 10)
+            		v11.Enabled = true
+            		table.insert(v6, v11)
+        		end
+    		end
+    		task.wait(4)
+    		for _, v12 in v6 do
+        		v12.Enabled = false
+    		end
+		end
+		task.spawn(Earthquake)
+	end)
 
     local function canSeeTarget(target, size)
         if killed then return end
@@ -292,8 +337,8 @@ task.spawn(function()
     
     game.Debris:AddItem(light, 20)
     camShake:ShakeOnce(23, 45, 0, 16, 1, 6)
-	local sting = Instance.new("Sound", workspace)
-	sting.SoundId = stingDissapear
-	sting.Volume = 2
-	sting.PlaybackSpeed = 1.16
+	--local sting = Instance.new("Sound", workspace)
+	--sting.SoundId = stingDissapear
+	--sting.Volume = 2
+	--sting.PlaybackSpeed = 1.16
 end)
