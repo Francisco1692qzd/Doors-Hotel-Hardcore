@@ -149,6 +149,11 @@ local function Rebound()
     entityPart.CanCollide = false
     entityPart.Anchored = true
     wait(4)
+	if workspace:FindFirstChild("SeekMovingNewClone") or workspace:FindFirstChild("SeekMoving") then
+		entityPart.CanCollide = false
+		entityPart.Anchored = false
+		return
+	end
     local rebmoving = G.LoadGithubAudio("https://raw.githubusercontent.com/Francisco1692qzd/RevivedOldHardcore/main/MovingRebound.mp3")
     local moving = Instance.new("Sound")
     moving.SoundId = rebmoving
@@ -162,6 +167,7 @@ local function Rebound()
 local function isBossActive()
     local room = latestRoom.Value
     if room == 50 or room == 100 then return true end
+	if workspace:FindFirstChild("SeekMovingNewClone") or workspace:FindFirstChild("SeekMoving") then return true end
     
     -- Check for any playing music in ReplicatedStorage that might indicate a cutscene
     for _, sound in pairs(game.ReplicatedStorage:GetDescendants()) do
