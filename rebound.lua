@@ -297,7 +297,7 @@ if isBossActive() then return end
 
             if entityPart and (entityPart.Position - v.Character.HumanoidRootPart.Position).Magnitude <= 60 then
                 camShake:Start()
-                camShake:ShakeOnce(17, 9, 0, 2,1,6)
+                camShake:ShakeOnce(14, 9, 0, 2,1,6)
             end
         end
     end)
@@ -307,7 +307,7 @@ if isBossActive() then return end
             local room = currentRooms[i]
             if room and room:FindFirstChild("RoomEntrance") then
                 local abc = room:FindFirstChild("RoomEntrance")
-                local jerk = game.TweenService:Create(entityPart, TweenInfo.new(speed, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0,false,0), {CFrame = abc.CFrame + Vector3.new(0,0.6,0)})
+                local jerk = game.TweenService:Create(entityPart, TweenInfo.new(speed, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0,false,0), {CFrame = abc.CFrame + Vector3.new(0,0.9,0)})
                 jerk:Play()
                 jerk.Completed:Wait()
             end
