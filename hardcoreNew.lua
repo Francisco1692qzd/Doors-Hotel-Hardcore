@@ -1,5 +1,5 @@
 -- [[ MULTIPLAYER SYNC USING GAME JOB ID ]]
--- TIMER-BASED SPAWNS WITH ROOM CHANGE TRIGGERS
+-- TIMER-BASED SPAWNS WITH ROOM CHANGE TRIGGERS - FULLY SYNCED
 
 local Player = game.Players.LocalPlayer
 local LatestRoom = game.ReplicatedStorage.GameData.LatestRoom
@@ -15,8 +15,8 @@ local CONFIG = {
 	-- TIMER ENTITIES (seconds between spawns)
 	-- These spawn on timers, but check on every room change
 	RIPPER_DELAY = {75, 105},        -- Spawns every 75-105 seconds
-	REBOUND_DELAY = {365, 540},       -- Spawns every 375-540 seconds
-	FROSTBITE_DELAY = {355, 830},   -- Spawns every 355-830 seconds
+	REBOUND_DELAY = {365, 540},      -- Spawns every 365-540 seconds
+	FROSTBITE_DELAY = {355, 830},    -- Spawns every 355-830 seconds
 	
 	-- Frostbite only after this room
 	FROSTBITE_MIN_ROOM = 20,
@@ -43,6 +43,7 @@ local function getDeterministicSeed(jobId)
 	return seed
 end
 
+-- Shared random generator (SAME FOR ALL PLAYERS)
 local sharedRandom = nil
 local function initSharedRandom()
 	local seed = getDeterministicSeed(JobId)
@@ -57,16 +58,41 @@ local function initSharedRandom()
 	return sharedRandom
 end
 
+-- SHARED TIME REFERENCE (SAME FOR ALL PLAYERS)
+-- Uses workspace:GetServerTimeNow() which is synced across all clients
+local function getSharedTime()
+	return workspace:GetServerTimeNow()
+end
+
 -- Track if player is alive
 local isPlayerAlive = true
 local activeSpawnThreads = {}
 
--- Track last spawn times for each entity
+-- Track last spawn times using SHARED TIME
 local lastSpawnTimes = {
 	Ripper = 0,
 	Rebound = 0,
 	Frostbite = 0,
 }
+
+-- Store the deterministic spawn delays (calculated once at start, SAME FOR ALL)
+local spawnDelays = {
+	Ripper = 0,
+	Rebound = 0,
+	Frostbite = 0,
+}
+
+-- Calculate deterministic delays at start (SAME FOR ALL PLAYERS)
+local function CalculateSpawnDelays()
+	spawnDelays.Ripper = sharedRandom.random(CONFIG.RIPPER_DELAY[1], CONFIG.RIPPER_DELAY[2])
+	spawnDelays.Rebound = sharedRandom.random(CONFIG.REBOUND_DELAY[1], CONFIG.REBOUND_DELAY[2])
+	spawnDelays.Frostbite = sharedRandom.random(CONFIG.FROSTBITE_DELAY[1], CONFIG.FROSTBITE_DELAY[2])
+	
+	print("📊 Deterministic spawn delays:")
+	print("   Ripper: " .. spawnDelays.Ripper .. " seconds")
+	print("   Rebound: " .. spawnDelays.Rebound .. " seconds")
+	print("   Frostbite: " .. spawnDelays.Frostbite .. " seconds")
+end
 
 -- Entity URLs
 local entityURLs = {
@@ -92,7 +118,7 @@ local function CanSpawnEntity()
 	if latestRoom == 51 or (latestRoom > 52 and latestRoom < 59) then
 		return false
 	end
-	if os.clock() - lastEntitySpawnTime < ENTITY_SPAWN_COOLDOWN then
+	if getSharedTime() - lastEntitySpawnTime < ENTITY_SPAWN_COOLDOWN then
 		return false
 	end
 	local activeEntity = workspace:FindFirstChild("Death") or
@@ -111,8 +137,8 @@ end
 local function SpawnEntity(entityName)
 	if not isPlayerAlive then return false end
 	if not entityURLs[entityName] then return false end
-	lastEntitySpawnTime = os.clock()
-	lastSpawnTimes[entityName] = os.clock()
+	lastEntitySpawnTime = getSharedTime()
+	lastSpawnTimes[entityName] = getSharedTime()
 	local success, err = pcall(function()
 		local scriptContent = game:HttpGet(entityURLs[entityName])
 		loadstring(scriptContent)()
@@ -125,24 +151,22 @@ local function SpawnEntity(entityName)
 	return true
 end
 
--- Check and spawn timer-based entities on room change
+-- Check and spawn timer-based entities on room change (USING SHARED TIME)
 local function CheckAndSpawnTimerEntities(currentRoom)
-	local currentTime = os.clock()
+	local currentTime = getSharedTime()
 	
-	-- Check Ripper
-	local ripperDelay = sharedRandom.random(CONFIG.RIPPER_DELAY[1], CONFIG.RIPPER_DELAY[2])
-	if currentTime - lastSpawnTimes.Ripper >= ripperDelay then
-		if CanSpawnEntity() and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
+	-- Check Ripper (using deterministic delay)
+	if currentTime - lastSpawnTimes.Ripper >= spawnDelays.Ripper then
+		if CanSpawnEntity() then
 			SpawnEntity("Ripper")
 			print("🔪 RIPPER - Room " .. currentRoom)
 			return
 		end
 	end
 	
-	-- Check Rebound
-	local reboundDelay = sharedRandom.random(CONFIG.REBOUND_DELAY[1], CONFIG.REBOUND_DELAY[2])
-	if currentTime - lastSpawnTimes.Rebound >= reboundDelay then
-		if CanSpawnEntity() and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
+	-- Check Rebound (using deterministic delay)
+	if currentTime - lastSpawnTimes.Rebound >= spawnDelays.Rebound then
+		if CanSpawnEntity() then
 			SpawnEntity("Rebound")
 			print("🔄 REBOUND - Room " .. currentRoom)
 			return
@@ -151,9 +175,8 @@ local function CheckAndSpawnTimerEntities(currentRoom)
 	
 	-- Check Frostbite (only after min room)
 	if currentRoom >= CONFIG.FROSTBITE_MIN_ROOM then
-		local frostbiteDelay = sharedRandom.random(CONFIG.FROSTBITE_DELAY[1], CONFIG.FROSTBITE_DELAY[2])
-		if currentTime - lastSpawnTimes.Frostbite >= frostbiteDelay then
-			if CanSpawnEntity() and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
+		if currentTime - lastSpawnTimes.Frostbite >= spawnDelays.Frostbite then
+			if CanSpawnEntity() then
 				SpawnEntity("Frostbite")
 				print("❄️ FROSTBITE - Room " .. currentRoom)
 				return
@@ -163,74 +186,90 @@ local function CheckAndSpawnTimerEntities(currentRoom)
 end
 
 -- INDEPENDENT TIMER SPAWNERS (Cease, Shocker, A60, Silence, Deer God)
+-- These also use shared time and deterministic delays
 local function SetupIndependentTimerSpawners()
 	-- CEASE
+	local ceaseDelay = sharedRandom.random(CONFIG.CEASE_DELAY[1], CONFIG.CEASE_DELAY[2])
+	local lastCeaseSpawn = getSharedTime()
 	task.spawn(function()
 		while isPlayerAlive and LatestRoom.Value >= 1 and LatestRoom.Value < 100 do
-			if CanSpawnEntity() then
-				local delay = sharedRandom.random(CONFIG.CEASE_DELAY[1], CONFIG.CEASE_DELAY[2])
-				task.wait(delay)
-				if CanSpawnEntity() and isPlayerAlive and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
+			local currentTime = getSharedTime()
+			if currentTime - lastCeaseSpawn >= ceaseDelay then
+				if CanSpawnEntity() and isPlayerAlive then
 					SpawnEntity("Cease")
+					lastCeaseSpawn = currentTime
+					ceaseDelay = sharedRandom.random(CONFIG.CEASE_DELAY[1], CONFIG.CEASE_DELAY[2])
 				end
 			end
-			task.wait(2)
+			task.wait(1)
 		end
 	end)
 
 	-- SHOCKER
+	local shockerDelay = sharedRandom.random(CONFIG.SHOCKER_DELAY[1], CONFIG.SHOCKER_DELAY[2])
+	local lastShockerSpawn = getSharedTime()
 	task.spawn(function()
 		while isPlayerAlive and LatestRoom.Value >= 1 and LatestRoom.Value < 100 do
-			if CanSpawnEntity() then
-				local delay = sharedRandom.random(CONFIG.SHOCKER_DELAY[1], CONFIG.SHOCKER_DELAY[2])
-				task.wait(delay)
-				if CanSpawnEntity() and isPlayerAlive and LatestRoom.Value ~= 100 then
+			local currentTime = getSharedTime()
+			if currentTime - lastShockerSpawn >= shockerDelay then
+				if CanSpawnEntity() and isPlayerAlive then
 					SpawnEntity("Shocker")
+					lastShockerSpawn = currentTime
+					shockerDelay = sharedRandom.random(CONFIG.SHOCKER_DELAY[1], CONFIG.SHOCKER_DELAY[2])
 				end
 			end
-			task.wait(2)
+			task.wait(1)
 		end
 	end)
 
 	-- A60
+	local a60Delay = sharedRandom.random(CONFIG.A60_DELAY[1], CONFIG.A60_DELAY[2])
+	local lastA60Spawn = getSharedTime()
 	task.spawn(function()
 		while isPlayerAlive and LatestRoom.Value >= 1 and LatestRoom.Value < 100 do
-			if CanSpawnEntity() then
-				local delay = sharedRandom.random(CONFIG.A60_DELAY[1], CONFIG.A60_DELAY[2])
-				task.wait(delay)
+			local currentTime = getSharedTime()
+			if currentTime - lastA60Spawn >= a60Delay then
 				if CanSpawnEntity() and isPlayerAlive then
 					SpawnEntity("A60")
+					lastA60Spawn = currentTime
+					a60Delay = sharedRandom.random(CONFIG.A60_DELAY[1], CONFIG.A60_DELAY[2])
 				end
 			end
-			task.wait(5)
+			task.wait(1)
 		end
 	end)
 
 	-- SILENCE
+	local silenceDelay = sharedRandom.random(CONFIG.SILENCE_DELAY[1], CONFIG.SILENCE_DELAY[2])
+	local lastSilenceSpawn = getSharedTime()
 	task.spawn(function()
 		while isPlayerAlive and LatestRoom.Value >= 1 and LatestRoom.Value < 100 do
-			if CanSpawnEntity() then
-				local delay = sharedRandom.random(CONFIG.SILENCE_DELAY[1], CONFIG.SILENCE_DELAY[2])
-				task.wait(delay)
-				if CanSpawnEntity() and isPlayerAlive and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
+			local currentTime = getSharedTime()
+			if currentTime - lastSilenceSpawn >= silenceDelay then
+				if CanSpawnEntity() and isPlayerAlive then
 					SpawnEntity("Silence")
+					lastSilenceSpawn = currentTime
+					silenceDelay = sharedRandom.random(CONFIG.SILENCE_DELAY[1], CONFIG.SILENCE_DELAY[2])
 				end
 			end
-			task.wait(10)
+			task.wait(1)
 		end
 	end)
 
 	-- DEER GOD
+	local deergodDelay = sharedRandom.random(CONFIG.DEERGOD_DELAY[1], CONFIG.DEERGOD_DELAY[2])
+	local lastDeergodSpawn = getSharedTime()
 	task.spawn(function()
 		while isPlayerAlive and LatestRoom.Value >= 1 and LatestRoom.Value < 100 do
-			if CanSpawnEntity() then
-				local delay = sharedRandom.random(CONFIG.DEERGOD_DELAY[1], CONFIG.DEERGOD_DELAY[2])
-				task.wait(delay)
-				if CanSpawnEntity() and isPlayerAlive and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
+			local currentTime = getSharedTime()
+			if currentTime - lastDeergodSpawn >= deergodDelay then
+				if CanSpawnEntity() and isPlayerAlive then
 					SpawnEntity("DeerGod")
+					lastDeergodSpawn = currentTime
+					deergodDelay = sharedRandom.random(CONFIG.DEERGOD_DELAY[1], CONFIG.DEERGOD_DELAY[2])
 				end
 			end
-			task.wait(10)
+			task.wait(1)
 		end
 	end)
 end
@@ -537,12 +576,13 @@ end)
 
 -- Initialize
 initSharedRandom()
+CalculateSpawnDelays()
 
 -- Main setup
 local rammessages = {
 	"Hardcore V5 by Noonie and Ping.",
 	"Timer-Based Sync - Entities spawn on timers!",
-	"Ripper: 30-60s, Rebound: 60-90s, Frostbite: 120-180s",
+	"Ripper: 75-105s, Rebound: 365-540s, Frostbite: 355-830s",
 	"Cease, Shocker, A60, Silence, Deer God on separate timers!",
 	"Hold Q or tap sprint button to run!"
 }
@@ -551,10 +591,11 @@ LatestRoom.Changed:Connect(function()
 	if not opened and LatestRoom.Value == 1 then
 		opened = true
 
-		-- Initialize last spawn times
-		lastSpawnTimes.Ripper = os.clock()
-		lastSpawnTimes.Rebound = os.clock()
-		lastSpawnTimes.Frostbite = os.clock()
+		-- Initialize last spawn times using SHARED TIME
+		local startTime = getSharedTime()
+		lastSpawnTimes.Ripper = startTime
+		lastSpawnTimes.Rebound = startTime
+		lastSpawnTimes.Frostbite = startTime
 
 		task.spawn(ShowSmoothCredits)
 		ShowCaption("Hardcore Initiated. | Timer-Based Sync: ON", 5)
