@@ -133,7 +133,7 @@ local function SPAWNHORROR()
     camShake:Start()
     camShake:Shake(result.Presets.Earthquake)
 	end)
-	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/newRipper.rbxm"
+	local rawURL = "https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/main/ripperfix1.rbxm"
 	local gameCrashURL = "https://raw.githubusercontent.com/DripCapybara/Doors-Modes/main/HardcoreMode/game%20crash%20sound.mp3"
 	
 	if G.LoadGithubModel then
