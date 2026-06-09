@@ -17,7 +17,7 @@ local opened = false
 local CONFIG = {
 	-- TIMER ENTITIES THAT WAIT FOR ROOM CHANGE (seconds between spawns)
 	RIPPER_DELAY = {75, 115},        -- Spawns every 75-115 seconds (waits for door)
-	REBOUND_DELAY = {480, 730},      -- Spawns every 365-540 seconds (waits for door)
+	REBOUND_DELAY = {480, 730},      -- Spawns every 480-730 seconds (waits for door)
 	FROSTBITE_DELAY = {355, 830},    -- Spawns every 355-830 seconds (waits for door)
 	
 	-- Frostbite only after this room
@@ -26,7 +26,7 @@ local CONFIG = {
 	-- OTHER TIMER ENTITIES (spawn immediately, no door wait)
 	CEASE_DELAY = {50, 80},         -- Spawns every 50-80 seconds (immediate)
 	SHOCKER_DELAY = {25, 50},       -- Spawns every 25-50 seconds (immediate)
-	A60_DELAY = {1750, 2400},       -- Spawns every 5-8 minutes (immediate)
+	A60_DELAY = {1750, 2400},       -- Spawns every 29-40 minutes (immediate)
 	SILENCE_DELAY = {600, 900},     -- Spawns every 10-15 minutes (immediate)
 	DEERGOD_DELAY = {900, 1200},    -- Spawns every 15-20 minutes (immediate)
 }
@@ -139,23 +139,42 @@ local entityURLs = {
 local lastEntitySpawnTime = 0
 local ENTITY_SPAWN_COOLDOWN = 3
 
-local function CanSpawnEntity()
+local function CanSpawnEntity(entityName)
 	if not isPlayerAlive then return false end
 
+	-- Seek check - NO entities spawn during Seek (except A60?)
 	if workspace:FindFirstChild("SeekMovingNewClone") or workspace:FindFirstChild("SeekMoving") then
+		-- A60 is allowed to spawn during Seek? If not, return false for all
 		return false
 	end
 
 	local latestRoom = LatestRoom.Value
 
-	if latestRoom == 50 or latestRoom == 51 or (latestRoom > 52 and latestRoom < 59) then
+	-- Room 100 check - NO entities spawn at Door 100
+	if latestRoom == 100 then
+		return false
+	end
+	
+	-- Room 50 check - Only A60 can spawn here
+	if latestRoom == 50 then
+		if entityName == "A60" then
+			-- A60 is allowed in room 50
+		else
+			return false
+		end
+	end
+	
+	-- Boss rooms 51-58 - NO entities spawn (except maybe A60?)
+	if latestRoom == 51 or (latestRoom > 52 and latestRoom < 59) then
 		return false
 	end
 
+	-- Cooldown between spawns
 	if workspace:GetServerTimeNow() - lastEntitySpawnTime < ENTITY_SPAWN_COOLDOWN then
 		return false
 	end
 
+	-- Check if any entity already exists
 	local activeEntity = workspace:FindFirstChild("Death") or
 		workspace:FindFirstChild("RushCounterpart") or
 		workspace:FindFirstChild("ReboundMoving") or
@@ -173,6 +192,11 @@ end
 local function SpawnEntity(entityName)
 	if not isPlayerAlive then return false end
 	if not entityURLs[entityName] then return false end
+	
+	-- Pass entity name to CanSpawnEntity for room-specific checks
+	if not CanSpawnEntity(entityName) then
+		return false
+	end
 
 	lastEntitySpawnTime = workspace:GetServerTimeNow()
 	lastSpawnTimes[entityName] = workspace:GetServerTimeNow()
@@ -199,9 +223,8 @@ local function CheckRoomWaitEntities(currentRoom)
 	
 	-- Check Ripper
 	if currentTime - lastSpawnTimes.Ripper >= spawnDelays.Ripper then
-		if CanSpawnEntity() and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
-			SpawnEntity("Ripper")
-			ShowCaption("⚠️ Ripper is approaching...", 3)
+		if SpawnEntity("Ripper") then
+			--ShowCaption("⚠️ Ripper is approaching...", 3)
 			print("🔪 RIPPER - Room " .. currentRoom)
 			return true
 		end
@@ -209,9 +232,8 @@ local function CheckRoomWaitEntities(currentRoom)
 	
 	-- Check Rebound
 	if currentTime - lastSpawnTimes.Rebound >= spawnDelays.Rebound then
-		if CanSpawnEntity() and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
-			SpawnEntity("Rebound")
-			ShowCaption("⚠️ Rebound is approaching...", 3)
+		if SpawnEntity("Rebound") then
+			--ShowCaption("⚠️ Rebound is approaching...", 3)
 			print("🔄 REBOUND - Room " .. currentRoom)
 			return true
 		end
@@ -220,9 +242,8 @@ local function CheckRoomWaitEntities(currentRoom)
 	-- Check Frostbite (only after min room)
 	if currentRoom >= CONFIG.FROSTBITE_MIN_ROOM then
 		if currentTime - lastSpawnTimes.Frostbite >= spawnDelays.Frostbite then
-			if CanSpawnEntity() and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
-				SpawnEntity("Frostbite")
-				ShowCaption("⚠️ Frostbite is approaching...", 3)
+			if SpawnEntity("Frostbite") then
+				--ShowCaption("⚠️ Frostbite is approaching...", 3)
 				print("❄️ FROSTBITE - Room " .. currentRoom)
 				return true
 			end
@@ -245,8 +266,7 @@ local function SetupImmediateTimerSpawners()
 			local delay = spawnDelays.Cease
 			
 			if timeSinceLastSpawn >= delay then
-				if CanSpawnEntity() and isPlayerAlive and LatestRoom.Value ~= 50 or LatestRoom.Value ~= 100 then
-					SpawnEntity("Cease")
+				if SpawnEntity("Cease") then
 					--ShowCaption("⚠️ Cease is approaching...", 3)
 				end
 			end
@@ -262,8 +282,7 @@ local function SetupImmediateTimerSpawners()
 			local delay = spawnDelays.Shocker
 			
 			if timeSinceLastSpawn >= delay then
-				if CanSpawnEntity() and isPlayerAlive then
-					SpawnEntity("Shocker")
+				if SpawnEntity("Shocker") then
 					--ShowCaption("⚠️ Shocker is approaching...", 3)
 				end
 			end
@@ -279,8 +298,7 @@ local function SetupImmediateTimerSpawners()
 			local delay = spawnDelays.A60
 			
 			if timeSinceLastSpawn >= delay then
-				if CanSpawnEntity() and isPlayerAlive then
-					SpawnEntity("A60")
+				if SpawnEntity("A60") then
 					--ShowCaption("⚠️ A-60 is approaching...", 3)
 				end
 			end
@@ -296,8 +314,7 @@ local function SetupImmediateTimerSpawners()
 			local delay = spawnDelays.Silence
 			
 			if timeSinceLastSpawn >= delay then
-				if CanSpawnEntity() and isPlayerAlive then
-					SpawnEntity("Silence")
+				if SpawnEntity("Silence") then
 					--ShowCaption("⚠️ Silence is approaching...", 3)
 				end
 			end
@@ -313,8 +330,7 @@ local function SetupImmediateTimerSpawners()
 			local delay = spawnDelays.DeerGod
 			
 			if timeSinceLastSpawn >= delay then
-				if CanSpawnEntity() and isPlayerAlive then
-					SpawnEntity("DeerGod")
+				if SpawnEntity("DeerGod") then
 					--ShowCaption("⚠️ Deer God is approaching...", 3)
 				end
 			end
@@ -333,12 +349,17 @@ local function SetupRoomHandler()
 
 		local currentRoom = LatestRoom.Value
 
-		-- Skip boss rooms
+		-- Skip boss rooms (51-58) for room-wait entities
 		if currentRoom == 51 or (currentRoom > 52 and currentRoom < 59) then
 			return
 		end
 
 		if currentRoom <= 1 then
+			return
+		end
+		
+		-- Room 100 - no spawns
+		if currentRoom == 100 then
 			return
 		end
 
@@ -633,6 +654,7 @@ local rammessages = {
 	"Deterministic MP Sync - All players see same spawns!",
 	"Ripper/Rebound/Frostbite: Timer + Door Required",
 	"Cease/Shocker/A60/Silence/DeerGod: Timer Only",
+	"A-60 can spawn in room 50!",
 	"Hold Q or tap sprint button to run!"
 }
 
@@ -675,6 +697,11 @@ LatestRoom.Changed:Connect(function()
 		print("      A60: " .. CONFIG.A60_DELAY[1] .. "-" .. CONFIG.A60_DELAY[2] .. " seconds")
 		print("      Silence: " .. CONFIG.SILENCE_DELAY[1] .. "-" .. CONFIG.SILENCE_DELAY[2] .. " seconds")
 		print("      DeerGod: " .. CONFIG.DEERGOD_DELAY[1] .. "-" .. CONFIG.DEERGOD_DELAY[2] .. " seconds")
+		print("📍 Spawn Restrictions:")
+		print("   - NO spawns during Seek chase")
+		print("   - NO spawns in rooms 51-58")
+		print("   - NO spawns in room 100")
+		print("   - ONLY A-60 can spawn in room 50")
 	end
 end)
 
