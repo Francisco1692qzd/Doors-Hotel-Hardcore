@@ -57,10 +57,10 @@ local function Silence()
     local storer = ambruhspeed
     local entity = nil
     local killed = false
-	if not game.ReplicatedStorage:FindFirstChild("ClientModules") then return end
-    if not game.ReplicatedStorage.ClientModules:FindFirstChild("Module_Events") then return end
+	if not game.ReplicatedStorage:FindFirstChild("ModuleClients") then return end
+    if not game.ReplicatedStorage.ModuleClients:FindFirstChild("Module_Events") then return end
     if not workspace:FindFirstChild("CurrentRooms") then return end
-    local required = require(game.ReplicatedStorage.ClientModules.Module_Events)
+    local required = require(game.ReplicatedStorage.ModuleClients.Module_Events)
     local currentRooms = workspace:FindFirstChild("CurrentRooms")
     local latestRoomInt = game.ReplicatedStorage.GameData.LatestRoom
     local latestRoomModel = currentRooms:FindFirstChild(latestRoomInt.Value)
