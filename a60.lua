@@ -209,7 +209,7 @@ task.spawn(function()
                 
                 if canSeeTarget(v.Character, 70) and not v.Character:GetAttribute("Hiding") then
                     killed = true
-                    pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore/refs/heads/main/wow!.lua"))() end)
+                    pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/Doors-Hotel-Hardcore-Remake/refs/heads/main/wow!.lua"))() end)
                     
                     task.delay(1.3, function()
                         v.Character.Humanoid.Health = 0
