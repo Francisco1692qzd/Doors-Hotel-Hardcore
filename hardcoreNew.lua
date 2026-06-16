@@ -581,7 +581,9 @@ local rammessages = {
     "Ripper/Rebound/Frostbite: Timer + Door Required",
     "Cease/A60/Silence/DeerGod: Timer Only",
     "A-60 can spawn in room 50!",
-    "Hold Q or tap sprint button to run!"
+    "Hold Q or tap sprint button to run!",
+	"Roblox, atleast Minecraft didn't do your horrible updates, LOSER! MAKE THE L!",
+	"Roblox, atleast Minecraft didn't do your horrible updates, LOSER! MAKE THE L!"
 }
 
 LatestRoom.Changed:Connect(function()
