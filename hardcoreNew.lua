@@ -12,11 +12,11 @@ local opened = false
 -- SIMPLE CONFIG
 -- ============================================
 local CONFIG = {
-    RIPPER_DELAY = {75, 115},
-    REBOUND_DELAY = {480, 730},
-    FROSTBITE_DELAY = {355, 830},
+    RIPPER_DELAY = {45, 90},
+    REBOUND_DELAY = {230, 540},
+    FROSTBITE_DELAY = {630, 830},
     FROSTBITE_MIN_ROOM = 20,
-    CEASE_DELAY = {50, 80},
+    CEASE_DELAY = {60, 80},
     A60_DELAY = {1750, 2400},
     SILENCE_DELAY = {600, 900},
     DEERGOD_DELAY = {900, 1200},
@@ -581,9 +581,7 @@ local rammessages = {
     "Ripper/Rebound/Frostbite: Timer + Door Required",
     "Cease/A60/Silence/DeerGod: Timer Only",
     "A-60 can spawn in room 50!",
-    "Hold Q or tap sprint button to run!",
-	"Roblox, atleast Minecraft didn't do your horrible updates, LOSER! MAKE THE L!",
-	"Roblox, atleast Minecraft didn't do your horrible updates, LOSER! MAKE THE L!"
+    "Hold Q or tap sprint button to run!"
 }
 
 LatestRoom.Changed:Connect(function()
